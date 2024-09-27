@@ -29,6 +29,5 @@ namespace EventsWebApplication.Data
                 .WithMany(e => e.UserEvents)
                 .HasForeignKey(ue => ue.EventId);
         }
-
     }
 }

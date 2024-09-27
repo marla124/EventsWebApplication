@@ -7,6 +7,7 @@
         public DateTime ExpiringAt { get; set; }
         public string AssociateDeviceName { get; set; }
         public Guid UserId { get; set; }
+        public bool? IsActive { get; set; }
         public User User { get; set; }
     }
 }

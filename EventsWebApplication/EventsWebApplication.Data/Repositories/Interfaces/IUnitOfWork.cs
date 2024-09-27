@@ -4,10 +4,9 @@ namespace EventsWebApplication.Data.Repositories.Interfaces
 {
     public interface IUnitOfWork
     {
-        IRepository<User> UserRepository { get; }
+        IUserRepository UserRepository { get; }
         IRepository<Event> EventRepository { get; }
         IRepository<UserRole> UserRoleRepository { get; }
-        IRepository<Category> CategoryRepository { get; }
-        Task<int> Commit(CancellationToken cancellationToken);
+        ITokenRepository TokenRepository { get; }
     }
 }

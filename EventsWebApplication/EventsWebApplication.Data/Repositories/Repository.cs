@@ -43,9 +43,10 @@ namespace EventsWebApplication.Data.Repositories
             }
         }
 
-        public virtual async Task CreateOne(TEntity entity, CancellationToken cancellationToken)
+        public virtual async Task<TEntity> CreateOne(TEntity entity, CancellationToken cancellationToken)
         {
             await _dbSet.AddAsync(entity);
+            return entity;
         }
 
         public IQueryable<TEntity> GetAsQueryable()
@@ -75,5 +76,9 @@ namespace EventsWebApplication.Data.Repositories
             return entity;
         }
 
+        public async Task Commit(CancellationToken cancellationToken)
+        {
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
     }
 }
