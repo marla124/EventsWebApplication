@@ -2,7 +2,6 @@
 using EventsWebApplication.BL.Dto;
 using EventsWebApplication.BL.Interfaces;
 using EventsWebApplication.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventsWebApplication.Controllers
@@ -48,32 +47,19 @@ namespace EventsWebApplication.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> CreateUser(RegisterModel request, CancellationToken cancellationToken)
         {
-            if (ModelState.IsValid)
-            {
-                var dto = mapper.Map<UserDto>(request);
-                var user = await userService.RegisterUser(dto, cancellationToken);
-                return Created($"users/{user.Id}", user);
-            }
-            else
-            {
-                return BadRequest();
-            }
+            var dto = mapper.Map<UserDto>(request);
+            var user = await userService.RegisterUser(dto, cancellationToken);
+            return Created($"users/{user.Id}", user);
+
         }
 
         [HttpPatch]
         [Route("[action]")]
         public async Task<IActionResult> UpdateUser(UpdateUserRequestViewModel request, CancellationToken cancellationToken)
         {
-            if (ModelState.IsValid)
-            {
-                var dto = mapper.Map<UserDto>(request);
+            var dto = mapper.Map<UserDto>(request);
+            return Ok(mapper.Map<UserViewModel>(await userService.Update(dto, cancellationToken)));
 
-                return Ok(mapper.Map<UserViewModel>(await userService.Update(dto, cancellationToken)));
-            }
-            else
-            {
-                return BadRequest();
-            }
         }
     }
 }

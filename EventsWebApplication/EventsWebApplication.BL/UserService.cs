@@ -31,6 +31,8 @@ namespace EventsWebApplication.BL
             var user = new User()
             {
                 Id = Guid.NewGuid(),
+                Name= dto.Name,
+                Surname = dto.Surname,
                 Email = dto.Email,
                 PasswordHash = MdHashGenerate(dto.Password),
                 UpdatedAt = DateTime.UtcNow,
