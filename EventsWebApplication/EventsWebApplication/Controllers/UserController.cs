@@ -22,19 +22,19 @@ namespace EventsWebApplication.Controllers
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
-            var project = mapper.Map<UserViewModel>(await userService.GetById(id, cancellationToken));
-            if (project == null)
+            var users = mapper.Map<UserViewModel>(await userService.GetById(id, cancellationToken));
+            if (users == null)
             {
                 return NotFound();
             }
-            return Ok(project);
+            return Ok(users);
         }
 
         [HttpGet("[action]")]
         public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
         {
-            var projects = mapper.Map<List<UserViewModel>>(await userService.GetMany(cancellationToken));
-            return Ok(projects);
+            var users = mapper.Map<List<UserViewModel>>(await userService.GetMany(cancellationToken));
+            return Ok(users);
         }
 
         [HttpDelete("[action]/{id}")]
