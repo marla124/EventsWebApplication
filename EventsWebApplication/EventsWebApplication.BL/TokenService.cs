@@ -6,6 +6,7 @@ using EventsWebApplication.Data.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection.Metadata;
 using System.Security.Claims;
 using System.Text;
 using UAParser;
@@ -25,9 +26,9 @@ namespace EventsWebApplication.BL
             _configuration = configuration;
             _userService = userService;
         }
-        public async Task<Guid> AddRefreshToken(Guid id, string userAgent, Guid userId, CancellationToken cancellationToken)
+        public async Task<Guid> AddRefreshToken(string email, string userAgent, Guid userId, CancellationToken cancellationToken)
         {
-            var user = await _userService.GetById(id, cancellationToken);
+            var user = await _userService.GetByEmail(email, cancellationToken);
             if (user != null)
             {
                 var refTokenDto = new RefreshTokenDto
