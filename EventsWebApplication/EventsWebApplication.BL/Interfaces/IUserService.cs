@@ -8,5 +8,6 @@ namespace EventsWebApplication.BL.Interfaces
         Task<UserDto> GetByEmail(string email, CancellationToken cancellationToken);
         Task<UserDto> GetUserByRefreshToken(Guid refreshToken, CancellationToken cancellationToken);
         Task<UserDto> RegisterUser(UserDto dto, CancellationToken cancellationToken);
+        Task<UserRoleDto> GetUserRole(Guid userId, CancellationToken cancellationToken);
     }
 }

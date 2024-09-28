@@ -10,7 +10,11 @@ namespace EventsWebApplication
     {
         public Mapping()
         {
+            CreateMap<EventDto, EventModel>().ReverseMap();
+            CreateMap<EventDto, UpdateEventModel>().ReverseMap();
+            CreateMap<EventDto, Event>().ReverseMap();
             CreateMap<UserDto, User>().ReverseMap();
+            CreateMap<UserRoleDto, UserRole>().ReverseMap();
             CreateMap<RegisterModel, UserDto>().ReverseMap();
             CreateMap<LoginModel, UserDto>().ReverseMap();
             CreateMap<UserDto, UserViewModel>().ReverseMap();

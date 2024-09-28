@@ -9,5 +9,6 @@ namespace EventsWebApplication.BL.Interfaces
 {
     public interface IEventService : IService<EventDto>
     {
+        Task DeleteById(Guid id, Guid userId, CancellationToken cancellationToken);
     }
 }

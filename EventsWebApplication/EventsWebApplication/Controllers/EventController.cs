@@ -9,13 +9,19 @@ namespace EventsWebApplication.Controllers
 {
     public class EventController : BaseController
     {
-        private readonly IEventService eventService;
-        private readonly IMapper mapper;
+        private readonly IEventService _eventService;
+        private readonly IMapper _mapper;
+
+        public EventController(IEventService eventService, IMapper mapper)
+        {
+            _eventService =eventService;
+            _mapper = mapper;
+        }
 
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
-            var events = mapper.Map<EventModel>(await eventService.GetById(id, cancellationToken));
+            var events = _mapper.Map<EventModel>(await _eventService.GetById(id, cancellationToken));
             if (events == null)
             {
                 return NotFound();
@@ -26,32 +32,39 @@ namespace EventsWebApplication.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetEvents(CancellationToken cancellationToken)
         {
-            var events = mapper.Map<List<EventModel>>(await eventService.GetMany(cancellationToken));
+            var events = _mapper.Map<List<EventModel>>(await _eventService.GetMany(cancellationToken));
             return Ok(events);
         }
 
         [HttpDelete("[action]/{id}")]
         public async Task<IActionResult> DeleteById(Guid id, CancellationToken cancellationToken)
         {
-            await eventService.DeleteById(id, cancellationToken);
+            var userId = Guid.Parse(GetUserId());
+            await _eventService.DeleteById(id, userId, cancellationToken);
             return Ok();
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> CreateEvent(EventModel request, CancellationToken cancellationToken)
         {
-            var dto = mapper.Map<EventDto>(request);
-            var eventInfo = await eventService.Create(dto, cancellationToken);
+            var userId = Guid.Parse(GetUserId());
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+            var dto = _mapper.Map<EventDto>(request);
+            dto.UserCreatorId = userId;
+            var eventInfo = await _eventService.Create(dto, cancellationToken);
             return Created($"event/{eventInfo.Id}", eventInfo);
 
         }
 
         [HttpPatch]
         [Route("[action]")]
-        public async Task<IActionResult> UpdateEvent(EventModel request, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateEvent(UpdateEventModel request, CancellationToken cancellationToken)
         {
-            var dto = mapper.Map<EventDto>(request);
-            return Ok(mapper.Map<EventModel>(await eventService.Update(dto, cancellationToken)));
+            var dto = _mapper.Map<EventDto>(request);
+            return Ok(_mapper.Map<UpdateEventModel>(await _eventService.Update(dto, cancellationToken)));
 
         }
     }

@@ -23,8 +23,10 @@ namespace EventsWebApplication
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRepository<Event>, Repository<Event>>();
             services.AddScoped<IRepository<UserRole>, Repository<UserRole>>();
+            services.AddScoped<IRepository<Category>, Repository<Category>>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IEventService, EventService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

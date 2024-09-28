@@ -6,6 +6,7 @@ namespace EventsWebApplication.Data.Repositories.Interfaces
     {
         IUserRepository UserRepository { get; }
         IRepository<Event> EventRepository { get; }
+        IRepository<Category> CategoryRepository { get; }
         IRepository<UserRole> UserRoleRepository { get; }
         ITokenRepository TokenRepository { get; }
     }

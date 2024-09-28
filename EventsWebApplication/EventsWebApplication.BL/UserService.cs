@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace EventsWebApplication.BL
 {
@@ -79,5 +81,17 @@ namespace EventsWebApplication.BL
             var user = await _unitOfWork.UserRepository.GetByEmail(email, cancellationToken);
             return _mapper.Map<UserDto>(user);
         }
+
+        public async Task<UserRoleDto> GetUserRole(Guid userId, CancellationToken cancellationToken)
+        {
+            var user = await _unitOfWork.UserRepository.GetById(userId, cancellationToken);
+            if (user == null)
+            {
+                throw new KeyNotFoundException(nameof(user));
+            }
+            var role = await _unitOfWork.UserRoleRepository.GetById(user.UserRoleId, cancellationToken);
+            return _mapper.Map<UserRoleDto>(role);
+        }
+
     }
 }

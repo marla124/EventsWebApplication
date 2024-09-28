@@ -37,7 +37,7 @@ namespace EventsWebApplication.BL
             await _repository.Commit(cancellationToken);
         }
 
-        public async Task<TDto?> Create(TDto dto, CancellationToken cancellationToken)
+        virtual public async Task<TDto?> Create(TDto dto, CancellationToken cancellationToken)
         {
             var entity = _mapper.Map<TEntity>(dto);
             var createdEntity = await _repository.CreateOne(entity, cancellationToken);
@@ -45,7 +45,7 @@ namespace EventsWebApplication.BL
             return _mapper.Map<TDto>(createdEntity);
         }
 
-        public async Task<TDto?> Update(TDto dto, CancellationToken cancellationToken)
+        virtual public async Task<TDto?> Update(TDto dto, CancellationToken cancellationToken)
         {
             var entity = _mapper.Map<TEntity>(dto);
             var createdEntity = await _repository.Update(entity, cancellationToken);

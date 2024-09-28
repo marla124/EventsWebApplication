@@ -30,6 +30,38 @@ namespace EventsWebApplication.Data.Extensions
                 await dbContext.UserRoles.AddRangeAsync(roles);
                 await dbContext.SaveChangesAsync();
             }
+            var adminRole = await dbContext.UserRoles.FirstOrDefaultAsync(r => r.Role == "Admin");
+
+            if (adminRole != null && !await dbContext.Users.AnyAsync())
+            {
+                var userAdmin = new User()
+                {
+                    Name = "Admin",
+                    Surname = "User",
+                    Email = "admin@example.com",
+                    PasswordHash = "B45CFFE084DD3D20D928BEE85E7B0F21", //string
+                    UserRoleId = adminRole.Id,
+                };
+
+                await dbContext.Users.AddRangeAsync(userAdmin);
+                await dbContext.SaveChangesAsync();
+            }
+
+            if (!await dbContext.Categories.AnyAsync())
+            {
+                var categories = new List<Category>
+                {
+                    new Category { Name = "Business Events" },
+                    new Category { Name = "Entertainment Events" },
+                    new Category { Name = "Cultural Events" },
+                    new Category { Name = "Sports Events" },
+                    new Category { Name = "Charity Events" },
+                    new Category { Name = "Other Events" }
+                };
+
+                await dbContext.Categories.AddRangeAsync(categories);
+                await dbContext.SaveChangesAsync();
+            }
 
             return app;
         }

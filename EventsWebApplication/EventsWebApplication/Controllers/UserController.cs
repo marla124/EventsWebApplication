@@ -2,6 +2,7 @@
 using EventsWebApplication.BL.Dto;
 using EventsWebApplication.BL.Interfaces;
 using EventsWebApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventsWebApplication.Controllers
@@ -38,6 +39,7 @@ namespace EventsWebApplication.Controllers
         }
 
         [HttpDelete("[action]/{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteById(Guid id, CancellationToken cancellationToken)
         {
             await userService.DeleteById(id, cancellationToken);
@@ -54,6 +56,7 @@ namespace EventsWebApplication.Controllers
         }
 
         [HttpPatch]
+        [Authorize]
         [Route("[action]")]
         public async Task<IActionResult> UpdateUser(UpdateUserRequestViewModel request, CancellationToken cancellationToken)
         {
