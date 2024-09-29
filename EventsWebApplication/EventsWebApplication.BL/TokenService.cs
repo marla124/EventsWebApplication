@@ -46,7 +46,7 @@ namespace EventsWebApplication.BL
             }
             else
             {
-                throw new Exception("User not found");
+                throw new KeyNotFoundException("User not found");
             }
         }
 
