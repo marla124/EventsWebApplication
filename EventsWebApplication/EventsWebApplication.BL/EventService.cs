@@ -19,7 +19,7 @@ namespace EventsWebApplication.BL
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public EventService(IRepository<Event> repository, IMapper mapper, IUserService userService,
+        public EventService(IEventRepository repository, IMapper mapper, IUserService userService,
             IUnitOfWork unitOfWork) : base(repository, mapper)
         {
             _userService = userService;
@@ -81,6 +81,48 @@ namespace EventsWebApplication.BL
             {
                 throw new KeyNotFoundException("userId not found");
             }
+        }
+
+        public async Task AddParticipantToEvent(Guid userId, Guid eventId, CancellationToken cancellationToken)
+        { 
+            await _unitOfWork.EventRepository.AddParticipantToEvent(userId, eventId, cancellationToken);
+        }
+
+        public async Task DeleteParticipantFromEvent(Guid userId, Guid eventId, CancellationToken cancellationToken)
+        {
+            await _unitOfWork.EventRepository.DeleteParticipantFromEvent(userId, eventId, cancellationToken);
+        }
+
+        public async Task<List<UserDto>?> GetEventParticipants(Guid eventId, CancellationToken cancellationToken)
+        {
+            var users = await _unitOfWork.EventRepository.GetEventParticipants(eventId, cancellationToken);
+            return _mapper.Map<List<UserDto>?>(users);
+        }
+
+        public async Task<UserDto> GetEventParticipantById(Guid eventId, Guid userId, CancellationToken cancellationToken)
+        {
+            var user = await _unitOfWork.EventRepository.GetEventParticipantById(eventId, userId, cancellationToken);
+            return _mapper.Map<UserDto>(user);
+        }
+
+        public async Task<UserDto> GetByName(string name, CancellationToken cancellationToken)
+        {
+            var user = await _unitOfWork.EventRepository.GetByName(name, cancellationToken);
+            return _mapper.Map<UserDto>(user);
+        }
+
+        public async Task<List<EventDto>?> GetEventsByCriteria(DateTime? date, string? address, string? categoryName,
+            CancellationToken cancellationToken)
+        {
+            var categoryId = Guid.Empty;
+            if (!string.IsNullOrEmpty(categoryName))
+            {
+                var category = await _unitOfWork.CategoryRepository.FindBy(s => s.Name == categoryName).FirstOrDefaultAsync(cancellationToken);
+                categoryId = category.Id;
+            }
+
+            var events = await _unitOfWork.EventRepository.GetEventsByCriteria(date, address, categoryId, cancellationToken);
+            return _mapper.Map<List<EventDto>>(events);
         }
     }
 }

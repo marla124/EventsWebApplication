@@ -7,12 +7,12 @@ namespace EventsWebApplication.Data.Repositories
     {
         private readonly EventWebApplicationDbContext _dbContext;
         private readonly IUserRepository _userRepository;
-        private readonly IRepository<Event> _eventRepository;
+        private readonly IEventRepository _eventRepository;
         private readonly IRepository<UserRole> _userRoleRepository;
         private readonly IRepository<Category> _categoryRepository;
         private readonly ITokenRepository _tokenRepository;
 
-        public UnitOfWork(EventWebApplicationDbContext dbContext, IRepository<Event> eventRepository, IUserRepository userRepository, 
+        public UnitOfWork(EventWebApplicationDbContext dbContext, IEventRepository eventRepository, IUserRepository userRepository, 
             IRepository<UserRole> userRoleRepository, ITokenRepository tokenRepository, IRepository<Category> categoryRepository)
         {
             _dbContext = dbContext;
@@ -24,7 +24,7 @@ namespace EventsWebApplication.Data.Repositories
         }
 
         public IUserRepository UserRepository => _userRepository;
-        public IRepository<Event> EventRepository => _eventRepository;
+        public IEventRepository EventRepository => _eventRepository;
         public IRepository<UserRole> UserRoleRepository => _userRoleRepository;
         public IRepository<Category> CategoryRepository => _categoryRepository;
         public ITokenRepository TokenRepository => _tokenRepository;

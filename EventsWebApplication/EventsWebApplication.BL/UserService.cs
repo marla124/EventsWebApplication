@@ -3,12 +3,10 @@ using EventsWebApplication.BL.Dto;
 using EventsWebApplication.BL.Interfaces;
 using EventsWebApplication.Data.Entities;
 using EventsWebApplication.Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace EventsWebApplication.BL
 {
@@ -33,7 +31,7 @@ namespace EventsWebApplication.BL
             var user = new User()
             {
                 Id = Guid.NewGuid(),
-                Name= dto.Name,
+                Name = dto.Name,
                 Surname = dto.Surname,
                 Email = dto.Email,
                 PasswordHash = MdHashGenerate(dto.Password),
@@ -93,5 +91,11 @@ namespace EventsWebApplication.BL
             return _mapper.Map<UserRoleDto>(role);
         }
 
+        public async Task<List<EventDto>?> GetEventsByCriteria(DateTime? date, string? address, Guid? categoryId,
+            CancellationToken cancellationToken)
+        {
+            return _mapper.Map<List<EventDto>>(await _unitOfWork.EventRepository
+                .GetEventsByCriteria(date, address, categoryId, cancellationToken));
+        }
     }
 }

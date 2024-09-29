@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using EventsWebApplication.BL.Dto;
-using EventsWebApplication.BL;
 using EventsWebApplication.Models;
 using Microsoft.AspNetCore.Mvc;
 using EventsWebApplication.BL.Interfaces;
@@ -29,10 +28,29 @@ namespace EventsWebApplication.Controllers
             return Ok(events);
         }
 
+        [HttpGet("[action]/{name}")]
+        public async Task<IActionResult> GetByName(string name, CancellationToken cancellationToken)
+        {
+            var events = _mapper.Map<EventModel>(await _eventService.GetByName(name, cancellationToken));
+            if (events == null)
+            {
+                return NotFound();
+            }
+            return Ok(events);
+        }
+
         [HttpGet("[action]")]
         public async Task<IActionResult> GetEvents(CancellationToken cancellationToken)
         {
             var events = _mapper.Map<List<EventModel>>(await _eventService.GetMany(cancellationToken));
+            return Ok(events);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetEventsByCriteria(DateTime? date, string? address, string? categoryName,
+            CancellationToken cancellationToken)
+        {
+            var events = _mapper.Map<List<EventModel>>(await _eventService.GetEventsByCriteria(date, address, categoryName, cancellationToken));
             return Ok(events);
         }
 
@@ -48,10 +66,6 @@ namespace EventsWebApplication.Controllers
         public async Task<IActionResult> CreateEvent(EventModel request, CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(GetUserId());
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
             var dto = _mapper.Map<EventDto>(request);
             dto.UserCreatorId = userId;
             var eventInfo = await _eventService.Create(dto, cancellationToken);

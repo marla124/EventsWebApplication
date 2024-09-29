@@ -9,7 +9,6 @@
         public Category Category { get; set; }
         public int MaxNumberOfPeople { get; set; }
         public Guid UserCreatorId { get; set; }
-        public List<User>? Users { get; set; }
         public string? Address { get; set; }
         public byte[]? Image { get; set; }
         public List<UserEventTime>? UserEvents { get; set; }
