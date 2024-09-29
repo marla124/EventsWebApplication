@@ -5,6 +5,7 @@ using EventsWebApplication.Data;
 using EventsWebApplication.Data.Entities;
 using EventsWebApplication.Data.Repositories;
 using EventsWebApplication.Data.Repositories.Interfaces;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +19,8 @@ namespace EventsWebApplication
         {
             var connectionString = configuration.GetConnectionString("Default");
             services.AddDbContext<EventWebApplicationDbContext>(opt => opt.UseNpgsql(connectionString));
+
+            services.AddFluentValidationAutoValidation();
 
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
