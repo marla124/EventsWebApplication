@@ -2,7 +2,7 @@
 
 namespace EventsWebApplication.Middleware
 {
-    public static class ExceptionHandlerMiddlewareExtensions
+    public static class ExceptionHandlerMiddlewareExtension
     {
         public static IApplicationBuilder UseExceptionHandler(this
             IApplicationBuilder builder)

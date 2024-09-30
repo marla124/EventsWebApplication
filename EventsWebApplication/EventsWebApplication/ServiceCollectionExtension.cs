@@ -21,7 +21,7 @@ namespace EventsWebApplication
             services.AddDbContext<EventWebApplicationDbContext>(opt => opt.UseNpgsql(connectionString));
 
             services.AddFluentValidationAutoValidation();
-
+            
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
