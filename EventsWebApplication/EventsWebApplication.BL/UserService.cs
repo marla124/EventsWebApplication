@@ -90,12 +90,5 @@ namespace EventsWebApplication.BL
             var role = await _unitOfWork.UserRoleRepository.GetById(user.UserRoleId, cancellationToken);
             return _mapper.Map<UserRoleDto>(role);
         }
-
-        public async Task<List<EventDto>?> GetEventsByCriteria(DateTime? date, string? address, Guid? categoryId,
-            CancellationToken cancellationToken)
-        {
-            return _mapper.Map<List<EventDto>>(await _unitOfWork.EventRepository
-                .GetEventsByCriteria(date, address, categoryId, cancellationToken));
-        }
     }
 }

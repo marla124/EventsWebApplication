@@ -47,7 +47,7 @@ namespace EventsWebApplication.Data.Repositories
             }
             else
             {
-                throw new Exception("User is not a participant of the event");
+                throw new KeyNotFoundException("User is not a participant of the event");
             }
         }
 

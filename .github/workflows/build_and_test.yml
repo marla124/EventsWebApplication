@@ -13,15 +13,17 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '8.0.x'
+
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./EventsWebApplication/EventsWebApplication.sln
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build ./EventsWebApplication/EventsWebApplication.sln --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test --verbosity normal 
+      run: dotnet test ./EventsWebApplication/EventsWebApplication.sln --verbosity normal
