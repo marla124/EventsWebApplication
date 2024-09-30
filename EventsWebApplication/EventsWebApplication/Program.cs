@@ -49,7 +49,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseExceptionHandler();
+app.UseExceptionHandler("/Home/Error");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
