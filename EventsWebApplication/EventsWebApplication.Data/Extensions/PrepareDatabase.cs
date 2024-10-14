@@ -39,11 +39,11 @@ namespace EventsWebApplication.Data.Extensions
                     Name = "Admin",
                     Surname = "User",
                     Email = "admin@example.com",
-                    PasswordHash = "B45CFFE084DD3D20D928BEE85E7B0F21", //string
+                    PasswordHash = "6C53D1FC07B1AEA35563A0682987E6A1", //string12345678
                     UserRoleId = adminRole.Id,
                 };
 
-                await dbContext.Users.AddRangeAsync(userAdmin);
+                await dbContext.Users.AddAsync(userAdmin);
                 await dbContext.SaveChangesAsync();
             }
 

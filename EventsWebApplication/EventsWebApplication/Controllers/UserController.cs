@@ -32,6 +32,14 @@ namespace EventsWebApplication.Controllers
         }
 
         [HttpGet("[action]")]
+        public async Task<IActionResult> GetUserRole(CancellationToken cancellationToken)
+        {
+            var userId = Guid.Parse(GetUserId());
+            var role= await userService.GetUserRole(userId, cancellationToken);
+            return Ok(mapper.Map<UserRoleModel>(role));
+        }
+
+        [HttpGet("[action]")]
         public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
         {
             var users = mapper.Map<List<UserViewModel>>(await userService.GetMany(cancellationToken));
@@ -42,7 +50,7 @@ namespace EventsWebApplication.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteById(Guid id, CancellationToken cancellationToken)
         {
-            await userService.DeleteById(id, cancellationToken);
+            await userService.DeleteUserById(id, cancellationToken);
             return Ok();
         }
 

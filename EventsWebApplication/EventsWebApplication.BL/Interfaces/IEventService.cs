@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EventsWebApplication.Data.Entities;
-using EventsWebApplication.Data.Migrations;
+using Microsoft.AspNetCore.Http;
 
 namespace EventsWebApplication.BL.Interfaces
 {
@@ -16,9 +16,13 @@ namespace EventsWebApplication.BL.Interfaces
         Task DeleteById(Guid id, Guid userId, CancellationToken cancellationToken);
         Task<List<UserDto>?> GetEventParticipants(Guid eventId, CancellationToken cancellationToken);
         Task<UserDto> GetEventParticipantById(Guid eventId, Guid userId, CancellationToken cancellationToken);
-        Task<UserDto> GetByName(string name, CancellationToken cancellationToken);
+        Task<EventDto> GetByName(string name, CancellationToken cancellationToken);
 
-        Task<List<EventDto>?> GetEventsByCriteria(DateTime? date, string? address, string? categoryName,
+        Task<List<EventDto>?> GetEventsByCriteria(DateTime? date, string? address, Guid? categoryId,
             CancellationToken cancellationToken);
+
+        Task<List<EventDto>?> GetUsersEvents(Guid userId, CancellationToken cancellationToken);
+        Task<UpdateEventDto> Update(UpdateEventDto dto, Guid userId, CancellationToken cancellationToken);
+        Task UploadImage(Guid eventId, Guid userId, IFormFile file, CancellationToken cancellationToken);
     }
 }

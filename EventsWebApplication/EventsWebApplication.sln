@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventsWebApplication.BL", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2661F7B2-746A-471C-8E90-54B2E0BCDFB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventWebApplication.Tests", "EventWebApplication.Tests\EventWebApplication.Tests.csproj", "{5DBB5006-6DFB-4577-955C-510E925F459C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventWebApplication.Tests", "EventWebApplication.Tests\EventWebApplication.Tests.csproj", "{5DBB5006-6DFB-4577-955C-510E925F459C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventWebApplication.IntegrationTests", "EventWebApplication.IntegrationTests\EventWebApplication.IntegrationTests.csproj", "{CE6A0B0D-8800-498F-AE08-52A052DF2EE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,12 +37,17 @@ Global
 		{5DBB5006-6DFB-4577-955C-510E925F459C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DBB5006-6DFB-4577-955C-510E925F459C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DBB5006-6DFB-4577-955C-510E925F459C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE6A0B0D-8800-498F-AE08-52A052DF2EE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE6A0B0D-8800-498F-AE08-52A052DF2EE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE6A0B0D-8800-498F-AE08-52A052DF2EE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE6A0B0D-8800-498F-AE08-52A052DF2EE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5DBB5006-6DFB-4577-955C-510E925F459C} = {2661F7B2-746A-471C-8E90-54B2E0BCDFB1}
+		{CE6A0B0D-8800-498F-AE08-52A052DF2EE0} = {2661F7B2-746A-471C-8E90-54B2E0BCDFB1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9537295E-EE14-4A0D-A812-B0653CD6E940}

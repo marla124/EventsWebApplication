@@ -1,6 +1,8 @@
-﻿namespace EventsWebApplication.Models
+﻿using System;
+
+namespace EventsWebApplication.BL.Dto
 {
-    public class UpdateEventModel 
+    public class UpdateEventDto
     {
         public Guid Id { get; set; }
         public string? Name { get; set; }

@@ -14,5 +14,8 @@ namespace EventsWebApplication.Data.Repositories.Interfaces
 
         Task<List<Event>?> GetEventsByCriteria(DateTime? date, string? address, Guid? categoryId,
             CancellationToken cancellationToken);
+
+        Task<List<Event>?> GetUsersEvents(Guid userId, CancellationToken cancellationToken);
+
     }
 }
