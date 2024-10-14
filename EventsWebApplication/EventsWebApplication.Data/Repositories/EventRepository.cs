@@ -23,6 +23,14 @@ namespace EventsWebApplication.Data.Repositories
                 throw new KeyNotFoundException("User is already a participant of the event");
             }
 
+            var numberOfPepleNow = await _dbContext.UserEventsTime.CountAsync(cancellationToken);
+            var eventInfo = await GetById(eventId, cancellationToken);
+            var maxNumber = eventInfo.MaxNumberOfPeople;
+            if (numberOfPepleNow > maxNumber)
+            {
+                throw new InvalidOperationException("Max people");
+            }
+
             var userEvent = new UserEventTime()
             {
                 UserId = userId,
@@ -72,6 +80,17 @@ namespace EventsWebApplication.Data.Repositories
             return userEvent.User;
         }
 
+        public async Task<List<Event>?> GetUsersEvents(Guid userId, CancellationToken cancellationToken)
+        {
+            var usersEvents = await _dbContext.UserEventsTime
+                .Where(ev=>ev.UserId == userId)
+                .Include(ev=>ev.Event)
+                .ToListAsync(cancellationToken);
+
+            var events = usersEvents.Select(ev => ev.Event).ToList();
+
+            return events;
+        }
         public async Task<List<User>?> GetEventParticipants(Guid eventId, CancellationToken cancellationToken)
         {
             var userEvents = await _dbContext.UserEventsTime
@@ -98,7 +117,7 @@ namespace EventsWebApplication.Data.Repositories
                 query = query.Where(e => e.Address != null && e.Address.Contains(address));
             }
 
-            if (categoryId.HasValue)
+            if (categoryId.HasValue && categoryId.Value != Guid.Empty)
             {
                 query = query.Where(e => e.CategoryId == categoryId.Value);
             }

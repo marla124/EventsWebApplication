@@ -28,7 +28,7 @@ namespace EventsWebApplication.Data.Repositories
             }
 
             return await resultQuery.FirstOrDefaultAsync(entity => entity.Id.Equals(id), cancellationToken);
-        }
+            }
 
         public virtual async Task DeleteById(Guid id, CancellationToken cancellationToken)
         {
@@ -56,18 +56,13 @@ namespace EventsWebApplication.Data.Repositories
 
         public IQueryable<TEntity> FindBy(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes)
         {
-            var resultQuery = _dbSet.Where(expression);
+            var resultQuery = _dbSet.AsQueryable().Where(expression);
             if (includes.Any())
             {
                 resultQuery = includes.Aggregate(resultQuery,
                     (current, include) => current.Include(include));
             }
             return resultQuery;
-        }
-
-        public async Task<List<TEntity>> FindBy(CancellationToken cancellationToken)
-        {
-            return await _dbSet.ToListAsync(cancellationToken);
         }
 
         public async Task<TEntity> Update(TEntity entity, CancellationToken cancellationToken)
