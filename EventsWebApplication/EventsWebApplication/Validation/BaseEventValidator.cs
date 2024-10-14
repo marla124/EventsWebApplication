@@ -13,7 +13,7 @@ namespace EventsWebApplication.Validation
             RuleFor(eventInfo => eventInfo.Name)
                 .MaximumLength(250);
 
-            RuleFor(eventInfo => eventInfo.CategoryName)
+            RuleFor(eventInfo => eventInfo.CategoryId)
                 .NotEmpty();
 
             RuleFor(eventInfo => eventInfo.Address)
@@ -28,15 +28,6 @@ namespace EventsWebApplication.Validation
     {
         public EventValidator()
         {
-        }
-    }
-
-    public class UpdateEventValidator : BaseEventValidator<UpdateEventModel>
-    {
-        public UpdateEventValidator()
-        {
-            RuleFor(eventInfo => eventInfo.Id)
-                .NotEmpty();
         }
     }
 }
