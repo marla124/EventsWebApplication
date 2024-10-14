@@ -36,8 +36,7 @@ namespace EventsWebApplication.Controllers
         }
 
         [HttpPost]
-        [Route("[action]")]
-
+        [Route("Refresh")]
         public async Task<IActionResult> GenerateTokenByRefresh(RefreshTokenModel request, CancellationToken cancellationToken)
         {
             var userAgent = HttpContext.Request.Headers["User-Agent"].ToString();
