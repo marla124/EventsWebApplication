@@ -31,12 +31,6 @@ namespace EventsWebApplication.BL
             return dtoarr;
         }
 
-        public async Task DeleteById(Guid Id, CancellationToken cancellationToken)
-        {
-            await _repository.DeleteById(Id, cancellationToken);
-            await _repository.Commit(cancellationToken);
-        }
-
         virtual public async Task<TDto?> Create(TDto dto, CancellationToken cancellationToken)
         {
             var entity = _mapper.Map<TEntity>(dto);

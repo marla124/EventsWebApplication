@@ -2,13 +2,8 @@
 using EventsWebApplication.BL.Dto;
 using EventsWebApplication.BL.Interfaces;
 using EventsWebApplication.Data.Entities;
-using EventsWebApplication.Data.Repositories;
 using EventsWebApplication.Data.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventsWebApplication.BL
@@ -19,8 +14,8 @@ namespace EventsWebApplication.BL
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public EventService(IEventRepository repository, IMapper mapper, IUserService userService,
-            IUnitOfWork unitOfWork) : base(repository, mapper)
+        public EventService(IMapper mapper, IUserService userService,
+            IUnitOfWork unitOfWork) : base(unitOfWork.EventRepository, mapper)
         {
             _userService = userService;
             _mapper = mapper;
@@ -29,62 +24,66 @@ namespace EventsWebApplication.BL
 
         public async Task DeleteById(Guid id, Guid userId, CancellationToken cancellationToken)
         {
-            var eventInfo = await GetById(id, cancellationToken);
-            var role = await _userService.GetUserRole(userId, cancellationToken);
-            if (eventInfo.UserCreatorId == userId || role.Role == "Admin")
-            {
-                await _unitOfWork.EventRepository.DeleteById(id, cancellationToken);
-                await _unitOfWork.EventRepository.Commit(cancellationToken);
-            }
+            await _unitOfWork.EventRepository.DeleteById(id, cancellationToken);
+            await _unitOfWork.EventRepository.Commit(cancellationToken);
         }
 
-        public async override Task<EventDto> Update(EventDto dto, CancellationToken cancellationToken)
+        public async Task<UpdateEventDto> Update(UpdateEventDto dto, Guid userId, CancellationToken cancellationToken)
         {
-            var role = await _userService.GetUserRole(dto.Id, cancellationToken);
-            var eventEntity = _mapper.Map<Event>(dto);
-            if (dto.UserCreatorId == dto.Id || role.Role == "Admin")
+            var role = await _userService.GetUserRole(userId, cancellationToken);
+            var existingEvent = await _unitOfWork.EventRepository
+                .GetAsQueryable()
+                .FirstOrDefaultAsync(e => e.Id == dto.Id, cancellationToken);
+
+            if (existingEvent == null)
             {
-                await _unitOfWork.EventRepository.Update(eventEntity, cancellationToken);
+                throw new KeyNotFoundException();
+            }
+
+            existingEvent.Name = dto.Name ?? existingEvent.Name;
+            existingEvent.Description = dto.Description ?? existingEvent.Description;
+            existingEvent.DateAndTime = dto.DateAndTime ?? existingEvent.DateAndTime;
+            existingEvent.MaxNumberOfPeople = dto.MaxNumberOfPeople ?? existingEvent.MaxNumberOfPeople;
+            existingEvent.Address = dto.Address ?? existingEvent.Address;
+            existingEvent.CategoryId = dto.CategoryId ?? existingEvent.CategoryId;
+            existingEvent.Image = dto.Image ?? existingEvent.Image;
+            existingEvent.UpdatedAt = DateTime.UtcNow;
+            try
+            {
+                await _unitOfWork.EventRepository.Update(existingEvent, cancellationToken);
                 await _unitOfWork.EventRepository.Commit(cancellationToken);
                 return dto;
             }
-            else
+            catch (Exception ex)
             {
-                throw new UnauthorizedAccessException();
+                Console.WriteLine($"Exception: {ex.Message}");
+                throw;
             }
         }
 
-        public async override Task<EventDto> Create(EventDto dto, CancellationToken cancellationToken)
+
+        public override async Task<EventDto> Create(EventDto dto, CancellationToken cancellationToken)
         {
-            var category = await _unitOfWork.CategoryRepository.FindBy(s => s.Name == dto.CategoryName)
-                .FirstOrDefaultAsync(cancellationToken);
-            if (category != null)
+            var eventInfo = new Event()
             {
-                var eventInfo = new Event()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = dto.Name,
-                    Description = dto.Description,
-                    DateAndTime = dto.DateAndTime,
-                    CategoryId = category.Id,
-                    UserCreatorId = dto.UserCreatorId,
-                    MaxNumberOfPeople = dto.MaxNumberOfPeople,
-                    Address = dto.Address,
-                    Image = dto.Image,
-                    CreatedAt = DateTime.UtcNow,
-                };
-                var createdEntity = await _unitOfWork.EventRepository.CreateOne(eventInfo, cancellationToken);
-                await _unitOfWork.EventRepository.Commit(cancellationToken);
-                return _mapper.Map<EventDto>(createdEntity);
-            }
-            else
-            {
-                throw new KeyNotFoundException("userId not found");
-            }
+                Id = Guid.NewGuid(),
+                Name = dto.Name,
+                Description = dto.Description,
+                DateAndTime = dto.DateAndTime,
+                CategoryId = dto.CategoryId,
+                UserCreatorId = dto.UserCreatorId,
+                MaxNumberOfPeople = dto.MaxNumberOfPeople,
+                Address = dto.Address,
+                Image = dto.Image,
+                CreatedAt = DateTime.UtcNow,
+            };
+            var createdEntity = await _unitOfWork.EventRepository.CreateOne(eventInfo, cancellationToken);
+            await _unitOfWork.EventRepository.Commit(cancellationToken);
+            return _mapper.Map<EventDto>(createdEntity);
         }
 
         public async Task AddParticipantToEvent(Guid userId, Guid eventId, CancellationToken cancellationToken)
-        { 
+        {
             await _unitOfWork.EventRepository.AddParticipantToEvent(userId, eventId, cancellationToken);
         }
 
@@ -105,24 +104,47 @@ namespace EventsWebApplication.BL
             return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<UserDto> GetByName(string name, CancellationToken cancellationToken)
+        public async Task<EventDto> GetByName(string name, CancellationToken cancellationToken)
         {
             var user = await _unitOfWork.EventRepository.GetByName(name, cancellationToken);
-            return _mapper.Map<UserDto>(user);
+            return _mapper.Map<EventDto>(user);
         }
 
-        public async Task<List<EventDto>?> GetEventsByCriteria(DateTime? date, string? address, string? categoryName,
+        public async Task<List<EventDto>?> GetEventsByCriteria(DateTime? date, string? address, Guid? categoryId,
             CancellationToken cancellationToken)
         {
-            var categoryId = Guid.Empty;
-            if (!string.IsNullOrEmpty(categoryName))
-            {
-                var category = await _unitOfWork.CategoryRepository.FindBy(s => s.Name == categoryName).FirstOrDefaultAsync(cancellationToken);
-                categoryId = category.Id;
-            }
-
             var events = await _unitOfWork.EventRepository.GetEventsByCriteria(date, address, categoryId, cancellationToken);
             return _mapper.Map<List<EventDto>>(events);
+        }
+
+        public async Task<List<EventDto>?> GetUsersEvents(Guid userId, CancellationToken cancellationToken)
+        {
+            var events = await _unitOfWork.EventRepository.GetUsersEvents(userId, cancellationToken);
+            return _mapper.Map<List<EventDto>?>(events);
+        }
+
+        public async Task UploadImage(Guid eventId, Guid userId, IFormFile file, CancellationToken cancellationToken)
+        {
+            if (file == null || file.Length == 0)
+            {
+                throw new InvalidOperationException();
+            }
+
+            byte[] imageData;
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.CopyToAsync(memoryStream);
+                imageData = memoryStream.ToArray();
+            }
+
+            var eventToUpdate = _mapper.Map<UpdateEventDto>(await GetById(eventId, cancellationToken));
+            if (eventToUpdate == null)
+            {
+                throw new KeyNotFoundException();
+            }
+
+            eventToUpdate.Image = imageData;
+            await Update(eventToUpdate, userId, cancellationToken);
         }
     }
 }

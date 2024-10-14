@@ -59,6 +59,7 @@ namespace EventsWebApplication.BL
         }
         public async Task<string> GenerateJwtToken(UserDto userDto, CancellationToken cancellationToken)
         {
+            var role = (await _userService.GetUserRole(userDto.Id, cancellationToken)).Role;
             var isLifetime = int.TryParse(_configuration["Jwt:Lifetime"], out var lifetime);
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]);
             var iss = _configuration["Jwt:Issuer"];
@@ -69,7 +70,7 @@ namespace EventsWebApplication.BL
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                         new Claim(ClaimTypes.Email, userDto.Email),
-                        new Claim(ClaimTypes.Role, "Admin"),
+                        new Claim(ClaimTypes.Role, role),
                         new Claim("aud",aud),
                         new Claim("iss",iss),
                         new Claim("userId", userDto.Id.ToString())

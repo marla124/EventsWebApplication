@@ -1,4 +1,6 @@
-﻿namespace EventsWebApplication.Data.Entities
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+
+namespace EventsWebApplication.Data.Entities
 {
     public class User : BaseEntity
     {
