@@ -18,11 +18,18 @@ namespace EventsWebApplication.Data.Repositories
         {
             var userEventExists = await _dbContext.UserEventsTime
                 .AnyAsync(ue => ue.UserId == userId && ue.EventId == eventId, cancellationToken);
-            if (userEventExists)
+
+<<<<<<< Updated upstream
+=======
+            var numberOfPepleNow = await _dbContext.UserEventsTime.CountAsync(cancellationToken);
+            var eventInfo = await GetById(eventId, cancellationToken);
+            var maxNumber = eventInfo.MaxNumberOfPeople;
+            if (numberOfPepleNow > maxNumber || userEventExists)
             {
-                throw new KeyNotFoundException("User is already a participant of the event");
+                throw new InvalidOperationException();
             }
 
+>>>>>>> Stashed changes
             var userEvent = new UserEventTime()
             {
                 UserId = userId,

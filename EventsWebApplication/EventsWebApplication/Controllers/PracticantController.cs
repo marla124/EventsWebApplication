@@ -19,9 +19,22 @@ namespace EventsWebApplication.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> AddParticipantToEvent(Guid eventId, CancellationToken cancellationToken)
         {
+<<<<<<< Updated upstream
             var userId = Guid.Parse(GetUserId());
             await _eventService.AddParticipantToEvent(userId, eventId, cancellationToken);
             return Ok();
+=======
+            try
+            {
+                var userId = Guid.Parse(GetUserId());
+                await _eventService.AddParticipantToEvent(userId, eventId, cancellationToken);
+                return Ok();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest();
+            }
+>>>>>>> Stashed changes
         }
 
         [HttpDelete("[action]")]
