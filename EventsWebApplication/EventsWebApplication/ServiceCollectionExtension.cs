@@ -30,11 +30,22 @@ namespace EventsWebApplication
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policyBuilder =>
+                {
+                    policyBuilder.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
         }
 
         public static void ConfigureJwt

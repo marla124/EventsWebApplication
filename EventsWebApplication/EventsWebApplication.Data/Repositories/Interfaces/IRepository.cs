@@ -11,7 +11,6 @@ namespace EventsWebApplication.Data.Repositories.Interfaces
         Task<TEntity> CreateOne(TEntity entity, CancellationToken cancellationToken);
         IQueryable<TEntity> GetAsQueryable();
         IQueryable<TEntity> FindBy(Expression<Func<TEntity, bool>> expression, params Expression<Func<TEntity, object>>[] includes);
-        Task<List<TEntity>> FindBy(CancellationToken cancellationToken);
         Task<TEntity> Update(TEntity entity, CancellationToken cancellationToken);
         Task Commit(CancellationToken cancellationToken);
     }

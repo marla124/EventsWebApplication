@@ -2,6 +2,7 @@
 using EventsWebApplication.BL.Dto;
 using EventsWebApplication.BL.Interfaces;
 using EventsWebApplication.Data.Entities;
+using EventsWebApplication.Data.Repositories;
 using EventsWebApplication.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,12 @@ namespace EventsWebApplication.BL
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _mapper = mapper;
+        }
+
+        public async Task DeleteUserById(Guid Id, CancellationToken cancellationToken)
+        {
+            await _unitOfWork.UserRepository.DeleteById(Id, cancellationToken);
+            await _unitOfWork.UserRepository.Commit(cancellationToken);
         }
 
         public async Task<UserDto> RegisterUser(UserDto dto, CancellationToken cancellationToken)

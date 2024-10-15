@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EventsWebApplication.Data.Migrations
 {
     [DbContext(typeof(EventWebApplicationDbContext))]
-    [Migration("20240928162403_AddCreatorUserId")]
-    partial class AddCreatorUserId
+    [Migration("20241009231755_FirstMigration")]
+    partial class FirstMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,21 +24,6 @@ namespace EventsWebApplication.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("EventUser", b =>
-                {
-                    b.Property<Guid>("EventsId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("EventsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("EventUser");
-                });
 
             modelBuilder.Entity("EventsWebApplication.Data.Entities.Category", b =>
                 {
@@ -98,9 +83,14 @@ namespace EventsWebApplication.Data.Migrations
                     b.Property<Guid>("UserCreatorId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Events");
                 });
@@ -211,21 +201,6 @@ namespace EventsWebApplication.Data.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("EventUser", b =>
-                {
-                    b.HasOne("EventsWebApplication.Data.Entities.Event", null)
-                        .WithMany()
-                        .HasForeignKey("EventsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EventsWebApplication.Data.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("EventsWebApplication.Data.Entities.Event", b =>
                 {
                     b.HasOne("EventsWebApplication.Data.Entities.Category", "Category")
@@ -233,6 +208,10 @@ namespace EventsWebApplication.Data.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("EventsWebApplication.Data.Entities.User", null)
+                        .WithMany("Events")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Category");
                 });
@@ -290,6 +269,8 @@ namespace EventsWebApplication.Data.Migrations
 
             modelBuilder.Entity("EventsWebApplication.Data.Entities.User", b =>
                 {
+                    b.Navigation("Events");
+
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("UserEvents");

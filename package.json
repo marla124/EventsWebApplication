@@ -1,0 +1,7 @@
+{
+    "scripts": {
+        "start": "concurrently \"npm run server\" \"npm run client\"",
+        "server": "cd EventsWebApplication && dotnet run",
+        "client": "cd event-app && npm start"
+    }
+}

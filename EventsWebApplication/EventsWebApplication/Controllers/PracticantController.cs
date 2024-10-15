@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using EventsWebApplication.BL.Interfaces;
 using EventsWebApplication.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventsWebApplication.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class PracticantController : BaseController
     {
         private readonly IEventService _eventService;
@@ -16,14 +19,10 @@ namespace EventsWebApplication.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost("[action]")]
+        [HttpPost("[action]/{eventId}")]
+        [Authorize]
         public async Task<IActionResult> AddParticipantToEvent(Guid eventId, CancellationToken cancellationToken)
         {
-<<<<<<< Updated upstream
-            var userId = Guid.Parse(GetUserId());
-            await _eventService.AddParticipantToEvent(userId, eventId, cancellationToken);
-            return Ok();
-=======
             try
             {
                 var userId = Guid.Parse(GetUserId());
@@ -34,10 +33,10 @@ namespace EventsWebApplication.Controllers
             {
                 return BadRequest();
             }
->>>>>>> Stashed changes
         }
 
         [HttpDelete("[action]")]
+        [Authorize]
         public async Task<IActionResult> DeleteParticipantFromEvent(Guid eventId, CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(GetUserId());
