@@ -1,0 +1,87 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.events-container {
+    color: rgb(104, 36, 36);
+    align-items: center;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.filtre-butt {
+    margin: 10px;
+    min-width: 100px;
+    min-height: 40px;
+    border-radius: 7px;
+    font-size: 15px;
+    background-color: #ece5e6;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.filtre-container {
+    display: flex;
+    justify-content: center;
+}
+
+.events-list {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.list {
+    display: flex;
+    flex-wrap: wrap;
+    text-decoration: none !important;
+    border-radius: 7px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.events-list a {
+    text-decoration: none;
+    color: #0f2d4e;
+}
+
+.title-header-events {
+    margin-bottom: 30px;
+    text-align: center;
+    color: rgb(104, 36, 36);
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination .page-item {
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.pagination .page-link {
+    color: rgb(104, 36, 36);
+    padding: 10px 15px;
+    border: 1px solid rgb(104, 36, 36);
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination .page-link:hover {
+    background-color: rgb(104, 36, 36);
+    color: #fff;
+}
+
+.pagination .active .page-link {
+    background-color: rgb(104, 36, 36);
+    color: #fff;
+    border-color: rgb(104, 36, 36);
+}
