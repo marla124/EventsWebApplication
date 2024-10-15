@@ -29,10 +29,6 @@ namespace EventsWebApplication.Controllers
                 await _eventService.AddParticipantToEvent(userId, eventId, cancellationToken);
                 return Ok();
             }
-            catch (KeyNotFoundException ex)
-            {
-                return Conflict();
-            }
             catch (InvalidOperationException ex)
             {
                 return BadRequest();

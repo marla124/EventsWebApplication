@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2661F7B2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventWebApplication.Tests", "EventWebApplication.Tests\EventWebApplication.Tests.csproj", "{5DBB5006-6DFB-4577-955C-510E925F459C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventWebApplication.IntegrationTests", "EventWebApplication.IntegrationTests\EventWebApplication.IntegrationTests.csproj", "{CE6A0B0D-8800-498F-AE08-52A052DF2EE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventWebApplication.IntegrationTests", "EventWebApplication.IntegrationTests\EventWebApplication.IntegrationTests.csproj", "{CE6A0B0D-8800-498F-AE08-52A052DF2EE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

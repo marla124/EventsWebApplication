@@ -46,18 +46,17 @@ namespace EventWebApplication.IntegrationTests
             _eventDbContext?.Database.EnsureCreated();
         }
 
-        private static string CreateJwtForFakeUser()
+        public static string CreateJwtForFakeUser()
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("EB622E6F-F21D-44ED-9798-D993A8126605"));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var claims = new[] {
+            var claims = new[]
+            {
                 new Claim(JwtRegisteredClaimNames.Sub, "UserTest"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("userId", "1DFFFC38-0530-4E64-A1F7-1904A5A72017"),
+                new Claim("userId", "FD596604-0708-4841-A4CC-C0E8B3F87B5F"),
                 new Claim(ClaimTypes.Role, "Admin")
             };
-
             var token = new JwtSecurityToken(
                 issuer: "EventWebApplication",
                 audience: "EventWebApplication",
@@ -65,8 +64,12 @@ namespace EventWebApplication.IntegrationTests
                 expires: DateTime.Now.AddMinutes(15),
                 signingCredentials: credentials);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+            Console.WriteLine("Generated Token: " + tokenString);
+
+            return tokenString;
         }
+
         protected async Task<RefreshToken> PopulateTokenToDatabase()
         {
             var user = await PopulateUserToDatabase();
@@ -95,9 +98,15 @@ namespace EventWebApplication.IntegrationTests
                 Id = Guid.NewGuid(),
                 UpdatedAt = DateTime.Now,
                 PasswordHash = "5F4DCC3B5AA765D61D8327DEB882CF99",
-                UserRoleId = Guid.Parse("52a9905e-2041-4fd9-9d94-4dfc24e735cf")
+                UserRoleId = Guid.Parse("7f37b740-8a9b-45b2-8871-c3dba40fa673")
             };
 
+            var userRole = new UserRole
+            {
+                Id = Guid.Parse("7f37b740-8a9b-45b2-8871-c3dba40fa673"),
+                Role = "Admin"
+            };
+            _eventDbContext!.UserRoles.Add(userRole);
             _eventDbContext!.Users.Add(user);
             await _eventDbContext.SaveChangesAsync();
 
