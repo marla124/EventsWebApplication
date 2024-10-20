@@ -23,7 +23,7 @@ export default function EventPage() {
     useEffect(() => {
         const fetchEvent = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/Event/GetById/${eventId}`, {
+                const response = await axios.get(`/api/Event/GetById/${eventId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Accept': 'application/json'
@@ -39,7 +39,7 @@ export default function EventPage() {
     }, [eventId, token]);
 
     const handleRegistration = () => {
-        axios.post(`${process.env.REACT_APP_API_BASE_URL}/Practicant/AddParticipantToEvent/${eventId}`, {}, {
+        axios.post(`/api/Practicant/AddParticipantToEvent/${eventId}`, {}, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Accept': 'application/json'
@@ -49,30 +49,19 @@ export default function EventPage() {
                 console.log(response);
                 if (response.status === 200) {
                     alert('You are a participant in the event!');
+                } else {
+                    alert('An error occurred during registration.');
                 }
             })
             .catch(error => {
                 console.log(error);
-                if (error.response) {
-                    if (error.response.status === 409) {
-                        alert('You have already registered for this event.');
-                    } else if (error.response.status === 400) {
-                        alert('There are no more places for this event');
-                    } else {
-                        alert('An error occurred during registration.');
-                    }
-                } else {
-                    alert('An error occurred during registration.');
-                }
+                alert('An error occurred during registration.');
             });
     };
 
-
-
-
     const handleDeleteEvent = async () => {
         try {
-            await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/Event/DeleteById/${eventId}`, {
+            await axios.delete(`/api/Event/DeleteById/${eventId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Accept': 'application/json'

@@ -31,6 +31,7 @@ namespace EventsWebApplication.Data.Extensions
                 await dbContext.SaveChangesAsync();
             }
             var adminRole = await dbContext.UserRoles.FirstOrDefaultAsync(r => r.Role == "Admin");
+            var userRole = await dbContext.UserRoles.FirstOrDefaultAsync(r => r.Role == "User");
 
             if (adminRole != null && !await dbContext.Users.AnyAsync())
             {
@@ -42,7 +43,24 @@ namespace EventsWebApplication.Data.Extensions
                     PasswordHash = "6C53D1FC07B1AEA35563A0682987E6A1", //string12345678
                     UserRoleId = adminRole.Id,
                 };
-
+                var userAdmin1 = new User()
+                {
+                    Name = "Admin",
+                    Surname = "User",
+                    Email = "userU@example.com",
+                    PasswordHash = "6C53D1FC07B1AEA35563A0682987E6A1", //string12345678
+                    UserRoleId = adminRole.Id,
+                };
+                var userU = new User()
+                {
+                    Name = "Admin",
+                    Surname = "User",
+                    Email = "admin11111@example.com",
+                    PasswordHash = "6C53D1FC07B1AEA35563A0682987E6A1", //string12345678
+                    UserRoleId = adminRole.Id,
+                };
+                await dbContext.Users.AddAsync(userAdmin1);
+                await dbContext.Users.AddAsync(userU);
                 await dbContext.Users.AddAsync(userAdmin);
                 await dbContext.SaveChangesAsync();
             }

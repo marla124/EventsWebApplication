@@ -9,7 +9,7 @@ const useFileUpload = (eventId, token) => {
         formData.append('file', selectedFile);
         setUploading(true);
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/Event/UploadImage/${eventId}`, formData, {
+            const response = await axios.post(`/api/Event/UploadImage/${eventId}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'

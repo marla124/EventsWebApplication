@@ -7,7 +7,7 @@ const useEvents = (date, address, categoryId) => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await axios.get(process.env.REACT_APP_API_BASE_URL + '/Event/GetEventsByCriteria', {
+                const response = await axios.get('/api/Event/GetEventsByCriteria', {
                     params: { date, address, categoryId }
                 });
                 const sortedEvents = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

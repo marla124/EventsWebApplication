@@ -11,7 +11,7 @@ export default function useDeleteEvent() {
     useEffect(() => {
         const deleteEvent = async () => {
             try {
-                const response = await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/Event/DeleteById/${eventId}`, {
+                const response = await axios.delete(`/api/Event/DeleteById/${eventId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Accept': 'application/json'

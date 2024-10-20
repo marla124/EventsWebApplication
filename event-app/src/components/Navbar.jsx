@@ -17,7 +17,7 @@ export default function Navbar({ onLogout }) {
         const refreshToken = localStorage.getItem('refreshToken');
         if (refreshToken) {
             try {
-                await axios.delete(process.env.REACT_APP_API_BASE_URL + `/Token/Revoke/${refreshToken}`, {
+                await axios.delete(`/api/Token/Revoke/${refreshToken}`, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
