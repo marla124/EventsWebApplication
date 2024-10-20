@@ -21,7 +21,7 @@ export default function UpdateEventForm({ isOpen, onRequestClose, currentImage }
 
     const handleUpdateEvent = async () => {
         try {
-            const response = await axios.patch(process.env.REACT_APP_API_BASE_URL + '/Event/UpdateEvent', {
+            const response = await axios.patch('/api/Event/UpdateEvent', {
                 id: eventId,
                 name: name || null,
                 description: description || null,

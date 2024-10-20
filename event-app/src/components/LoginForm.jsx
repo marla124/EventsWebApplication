@@ -13,7 +13,7 @@ export default function LoginForm() {
     event.preventDefault();
     const data = { email, password };
     try {
-      const response = await axios.post(process.env.REACT_APP_API_BASE_URL + "/Token/GenerateToken", data);
+      const response = await axios.post("/api/Token/GenerateToken", data);
       if (response.status === 201 || response.status === 200) {
         const { jwtToken, refreshToken } = response.data;
         localStorage.setItem('jwtToken', jwtToken);

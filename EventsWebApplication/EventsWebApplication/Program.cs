@@ -1,5 +1,7 @@
 using EventsWebApplication;
+using EventsWebApplication.Data;
 using EventsWebApplication.Data.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 public partial class Program
@@ -11,6 +13,11 @@ public partial class Program
 // Add services to the container.
         builder.Services.ConfigureJwt(builder.Configuration);
         builder.Services.RegisterServices(builder.Configuration);
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ListenAnyIP(8080); // Настройка для HTTP на порту 8080
+            options.ListenAnyIP(8081); // Настройка для HTTPS на порту 8081, если требуется
+        });
         builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
@@ -43,7 +50,18 @@ public partial class Program
         });
 
         var app = builder.Build();
-
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<EventWebApplicationDbContext>();
+            try
+            {
+                db.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while migrating the database: {ex.Message}");
+            }
+        }
         app.PrepareDatabase().GetAwaiter().GetResult();
 
 // Configure the HTTP request pipeline.

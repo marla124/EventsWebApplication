@@ -8,7 +8,7 @@ export default function useEvents() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(process.env.REACT_APP_API_BASE_URL + '/Event/GetEvents', {
+                const response = await axios.get('/api/Event/GetEvents', {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Accept': 'application/json'

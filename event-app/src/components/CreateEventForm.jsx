@@ -21,7 +21,7 @@ export default function CreateEventForm({ isOpen, onRequestClose }) {
 
     const handleCreateEvent = async () => {
         try {
-            const response = await axios.post(process.env.REACT_APP_API_BASE_URL + '/Event/CreateEvent', {
+            const response = await axios.post('/api/Event/CreateEvent', {
                 name,
                 description,
                 dateAndTime: dateAndTime.toISOString(),
