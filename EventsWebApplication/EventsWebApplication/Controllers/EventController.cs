@@ -87,7 +87,7 @@ namespace EventsWebApplication.Controllers
 
         [HttpPost("[action]")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateEvent(EventModel request, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateEvent(CreateEventModel request, CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(GetUserId());
             var dto = _mapper.Map<EventDto>(request);

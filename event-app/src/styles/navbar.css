@@ -28,22 +28,6 @@
   margin-top: 10px;
 }
 
-.notifications_butt {
-  padding: 7px 10px;
-  text-decoration: none;
-  color: rgb(104, 36, 36);
-  margin-right: 10px;
-}
-
-.search_butt {
-  padding: 7px 10px;
-  text-decoration: none;
-  color: rgb(104, 36, 36);
-  margin-right: 10px;
-  border: none;
-  background: none;
-}
-
 .login_butt {
   padding: 7px 10px;
   border-radius: 10px;
@@ -61,4 +45,5 @@
 
 .login_butt .icon-user {
   margin-right: 10px;
+  cursor: pointer;
 }
