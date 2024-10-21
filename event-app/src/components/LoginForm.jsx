@@ -12,18 +12,18 @@ export default function LoginForm() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = { email, password };
+
     try {
       const response = await axios.post("/api/Token/GenerateToken", data);
       if (response.status === 201 || response.status === 200) {
         const { jwtToken, refreshToken } = response.data;
         localStorage.setItem('jwtToken', jwtToken);
         localStorage.setItem('refreshToken', refreshToken);
-        console.log(response.data);
         navigate('/');
       }
     } catch (error) {
       console.error('Error generating token:', error);
-      alert('An error occurred while logging in to your account. Please try again.')
+      alert('An error occurred while logging in to your account. Please try again.');
     }
   };
 

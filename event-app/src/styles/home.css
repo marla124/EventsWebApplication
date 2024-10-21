@@ -37,13 +37,15 @@
 
 .list {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    flex-wrap: nowrap;
     text-decoration: none !important;
     border-radius: 7px;
     text-align: center;
     justify-content: center;
     align-items: center;
 }
+
 
 .events-list a {
     text-decoration: none;
