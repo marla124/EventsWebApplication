@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using EventsWebApplication.BL.Dto;
-using EventsWebApplication.Data.Entities;
+using EventsWebApplication.Application.Dto;
+using EventsWebApplication.Domain.Entities;
 using EventsWebApplication.Models;
 
 

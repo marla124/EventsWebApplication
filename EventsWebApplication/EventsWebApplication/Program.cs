@@ -1,6 +1,6 @@
 using EventsWebApplication;
-using EventsWebApplication.Data;
-using EventsWebApplication.Data.Extensions;
+using EventsWebApplication.Infrastructure;
+using EventsWebApplication.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -15,8 +15,8 @@ public partial class Program
         builder.Services.RegisterServices(builder.Configuration);
         builder.WebHost.ConfigureKestrel(options =>
         {
-            options.ListenAnyIP(8080); // Настройка для HTTP на порту 8080
-            options.ListenAnyIP(8081); // Настройка для HTTPS на порту 8081, если требуется
+            options.ListenAnyIP(8080);
+            options.ListenAnyIP(8081); 
         });
         builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

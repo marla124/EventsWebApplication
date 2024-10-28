@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using EventsWebApplication.BL.Dto;
-using EventsWebApplication.BL.Interfaces;
+using EventsWebApplication.Application.Dto;
+using EventsWebApplication.Application.UseCases.GeneralUseCases.Interface;
+using EventsWebApplication.Application.UseCases.UserUseCases.Interface;
 using EventsWebApplication.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,23 +12,30 @@ namespace EventsWebApplication.Controllers
     [ApiController]
     public class UserController : BaseController
     {
-        private readonly IUserService userService;
-        private readonly IMapper mapper;
+        private readonly IMapper _mapper;
+        private readonly IGetUserRoleUseCase _getUserRoleUseCase;
+        private readonly IDeleteUserByIdUseCase _deleteUserByIdUseCase;
+        private readonly IRegisterUserUseCase _registerUserUseCase;
+        private readonly IGetUserByIdUseCase _getUserByIdUseCase;
+        private readonly IGetUsersUseCase _getUsersUseCase;
 
-        public UserController(IUserService userService, IMapper mapper)
+        public UserController(IMapper mapper, IGetUserRoleUseCase getUserRoleUseCase,
+            IDeleteUserByIdUseCase deleteUserByIdUseCase, IRegisterUserUseCase registerUserUseCase,
+            IGetUserByIdUseCase getUserByIdUseCase, IGetUsersUseCase getUsersUseCase)
         {
-            this.userService = userService;
-            this.mapper = mapper;
+            _mapper = mapper;
+            _getUserRoleUseCase = getUserRoleUseCase;
+            _deleteUserByIdUseCase = deleteUserByIdUseCase;
+            _registerUserUseCase = registerUserUseCase;
+            _getUserByIdUseCase = getUserByIdUseCase;
+            _getUsersUseCase = getUsersUseCase;
         }
 
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
-            var users = mapper.Map<UserViewModel>(await userService.GetById(id, cancellationToken));
-            if (users == null)
-            {
-                return NotFound();
-            }
+            var users = _mapper.Map<UserViewModel>(await _getUserByIdUseCase.Execute(id, cancellationToken));
+
             return Ok(users);
         }
 
@@ -35,14 +43,14 @@ namespace EventsWebApplication.Controllers
         public async Task<IActionResult> GetUserRole(CancellationToken cancellationToken)
         {
             var userId = Guid.Parse(GetUserId());
-            var role= await userService.GetUserRole(userId, cancellationToken);
-            return Ok(mapper.Map<UserRoleModel>(role));
+            var role = await _getUserRoleUseCase.Execute(userId, cancellationToken);
+            return Ok(_mapper.Map<UserRoleModel>(role));
         }
 
         [HttpGet("[action]")]
         public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
         {
-            var users = mapper.Map<List<UserViewModel>>(await userService.GetMany(cancellationToken));
+            var users = _mapper.Map<List<UserViewModel>>(await _getUsersUseCase.Execute(cancellationToken));
             return Ok(users);
         }
 
@@ -50,27 +58,19 @@ namespace EventsWebApplication.Controllers
         [Authorize]
         public async Task<IActionResult> DeleteById(Guid id, CancellationToken cancellationToken)
         {
-            await userService.DeleteUserById(id, cancellationToken);
+            await _deleteUserByIdUseCase.Execute(id, cancellationToken);
             return Ok();
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> CreateUser(RegisterModel request, CancellationToken cancellationToken)
         {
-            var dto = mapper.Map<UserDto>(request);
-            var user = await userService.RegisterUser(dto, cancellationToken);
+            var dto = _mapper.Map<UserDto>(request);
+            var user = await _registerUserUseCase.Execute(dto, cancellationToken);
             return Created($"users/{user.Id}", user);
 
         }
-
-        [HttpPatch]
-        [Authorize]
-        [Route("[action]")]
-        public async Task<IActionResult> UpdateUser(UpdateUserRequestViewModel request, CancellationToken cancellationToken)
-        {
-            var dto = mapper.Map<UserDto>(request);
-            return Ok(mapper.Map<UserViewModel>(await userService.Update(dto, cancellationToken)));
-
-        }
     }
+
 }
+
