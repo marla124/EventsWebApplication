@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.8" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
@@ -19,7 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EventsWebApplication.BL\EventsWebApplication.BL.csproj" />
+    <ProjectReference Include="..\EventsWebApplication.Application\EventsWebApplication.Application.csproj" />
+    <ProjectReference Include="..\EventsWebApplication.Domain\EventsWebApplication.Domain.csproj" />
+    <ProjectReference Include="..\EventsWebApplication.Infrastructure\EventsWebApplication.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

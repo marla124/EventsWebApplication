@@ -13,8 +13,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["EventsWebApplication/EventsWebApplication.csproj", "EventsWebApplication/"]
-COPY ["EventsWebApplication.BL/EventsWebApplication.BL.csproj", "EventsWebApplication.BL/"]
-COPY ["EventsWebApplication.Data/EventsWebApplication.Data.csproj", "EventsWebApplication.Data/"]
+COPY ["EventsWebApplication.Application/EventsWebApplication.Application.csproj", "EventsWebApplication.Application/"]
+COPY ["EventsWebApplication.Domain/EventsWebApplication.Domain.csproj", "EventsWebApplication.Domain/"]
+COPY ["EventsWebApplication.Infrastructure/EventsWebApplication.Infrastructure.csproj", "EventsWebApplication.Infrastructure/"]
 RUN dotnet restore "./EventsWebApplication/EventsWebApplication.csproj"
 COPY . .
 WORKDIR "/src/EventsWebApplication"

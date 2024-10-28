@@ -1,8 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using EventsWebApplication.Data;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
-using EventsWebApplication.Data.Entities;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +7,8 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using EventsWebApplication.Infrastructure;
+using EventsWebApplication.Domain.Entities;
 
 namespace EventWebApplication.IntegrationTests
 {

@@ -1,16 +1,12 @@
 ﻿using AutoMapper;
-using EventsWebApplication.BL.Interfaces;
-using EventsWebApplication.BL;
-using EventsWebApplication.Data.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EventsWebApplication.BL.Dto;
-using EventsWebApplication.Data.Entities;
-using EventsWebApplication.Data;
-using Microsoft.EntityFrameworkCore;
+using EventsWebApplication.Domain.Interfaces;
+using EventsWebApplication.Domain.Entities;
+using EventsWebApplication.Application.Dto;
+using EventsWebApplication.Application.UseCases.EventUseCases;
+using EventsWebApplication.Application.UseCases.EventUseCases.Interfaces;
+using EventsWebApplication.Application.UseCases.UserUseCases.Interface;
+using NSubstitute;
+using Xunit;
 
 namespace EventWebApplication.Tests
 {
@@ -18,16 +14,17 @@ namespace EventWebApplication.Tests
     {
         private readonly IUnitOfWork _unitOfWorkMock;
         private readonly IMapper _mapperMock;
-        private readonly IUserService _userServiceMock;
-        private readonly IEventService _eventService;
-
+        private readonly IDeleteEventByIdUseCase _deleteEventByIdUseCase;
+        private readonly IGetEventByNameUseCase _getEventByNameUseCase;
+        private readonly IGetUserRoleUseCase _getUserRoleUseCaseMock;
 
         public EventServiceTests()
         {
             _unitOfWorkMock = Substitute.For<IUnitOfWork>();
             _mapperMock = Substitute.For<IMapper>();
-            _userServiceMock = Substitute.For<IUserService>();
-            _eventService = new EventService(_mapperMock, _userServiceMock, _unitOfWorkMock);
+            _getEventByNameUseCase = new GetEventByNameUseCase(_mapperMock, _unitOfWorkMock);
+            _deleteEventByIdUseCase = new DeleteEventByIdUseCase(_unitOfWorkMock);
+            _getUserRoleUseCaseMock = Substitute.For<IGetUserRoleUseCase>();
         }
 
         [Fact]
@@ -40,7 +37,7 @@ namespace EventWebApplication.Tests
             _unitOfWorkMock.EventRepository.GetByName(name, CancellationToken.None).Returns(Task.FromResult(eventInfo));
             _mapperMock.Map<EventDto>(eventInfo).Returns(eventDto);
 
-            var result = await _eventService.GetByName(name, CancellationToken.None);
+            var result = await _getEventByNameUseCase.Execute(name, CancellationToken.None);
 
             Assert.NotNull(result);
             Assert.Equal(result.Name, name);
@@ -75,18 +72,17 @@ namespace EventWebApplication.Tests
         {
             _unitOfWorkMock.EventRepository.GetById(eventId, CancellationToken.None)
                 .Returns(Task.FromResult(eventInfo));
-            _userServiceMock.GetUserRole(userId, CancellationToken.None)
+            _getUserRoleUseCaseMock.Execute(userId, CancellationToken.None)
                 .Returns(Task.FromResult(userRole));
             _unitOfWorkMock.EventRepository.DeleteById(eventId, CancellationToken.None)
                 .Returns(Task.CompletedTask);
             _unitOfWorkMock.EventRepository.Commit(CancellationToken.None)
                 .Returns(Task.CompletedTask);
 
-            await _eventService.DeleteById(eventId, userId, CancellationToken.None);
+            await _deleteEventByIdUseCase.Execute(eventId, userId, CancellationToken.None);
 
             await _unitOfWorkMock.EventRepository.Received(1).DeleteById(eventId, CancellationToken.None);
             await _unitOfWorkMock.EventRepository.Received(1).Commit(CancellationToken.None);
         }
     }
 }
-
