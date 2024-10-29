@@ -66,7 +66,7 @@ namespace EventsWebApplication.Controllers
         public async Task<IActionResult> CreateUser(RegisterModel request, CancellationToken cancellationToken)
         {
             var dto = _mapper.Map<UserDto>(request);
-            var user = await _registerUserUseCase.Execute(dto, cancellationToken);
+            var user = _mapper.Map<UserViewModel>(await _registerUserUseCase.Execute(dto, cancellationToken));
             return Created($"users/{user.Id}", user);
 
         }

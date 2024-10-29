@@ -16,7 +16,7 @@ namespace EventsWebApplication.Controllers
         private readonly IGetEventParticipantByIdUseCase _getEventParticipantByIdUseCase;
         private readonly IGetEventParticipantsUseCase _getEventParticipantsUseCase;
         public PracticantController(IMapper mapper, IAddParticipantToEventUseCase addParticipantToEventUseCase,
-            IDeleteParticipantFromEventUseCase deleteParticipantFromEventUseCase, 
+            IDeleteParticipantFromEventUseCase deleteParticipantFromEventUseCase,
             IGetEventParticipantByIdUseCase getEventParticipantByIdUseCase,
             IGetEventParticipantsUseCase getEventParticipantsUseCase)
         {
@@ -31,9 +31,9 @@ namespace EventsWebApplication.Controllers
         [Authorize]
         public async Task<IActionResult> AddParticipantToEvent(Guid eventId, CancellationToken cancellationToken)
         {
-                var userId = Guid.Parse(GetUserId());
-                await _addParticipantToEventUseCase.Execute(userId, eventId, cancellationToken);
-                return Ok();
+            var userId = Guid.Parse(GetUserId());
+            await _addParticipantToEventUseCase.Execute(userId, eventId, cancellationToken);
+            return Ok();
         }
 
         [HttpDelete("[action]")]
@@ -56,7 +56,7 @@ namespace EventsWebApplication.Controllers
         public async Task<IActionResult> GetEventParticipantById(Guid eventId, Guid userId, CancellationToken cancellationToken)
         {
             var practicant = await _getEventParticipantByIdUseCase.Execute(eventId, userId, cancellationToken);
-            return Ok(practicant);
+            return Ok(_mapper.Map<UserViewModel>(practicant));
         }
     }
 }

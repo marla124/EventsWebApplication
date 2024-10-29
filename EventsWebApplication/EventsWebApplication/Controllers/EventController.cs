@@ -105,7 +105,7 @@ namespace EventsWebApplication.Controllers
             var userId = Guid.Parse(GetUserId());
             var dto = _mapper.Map<EventDto>(request);
             dto.UserCreatorId = userId;
-            var eventInfo = await _createEventUseCase.Execute(dto, cancellationToken);
+            var eventInfo = _mapper.Map<EventModel>(await _createEventUseCase.Execute(dto, cancellationToken));
             return Created($"event/{eventInfo.Id}", eventInfo);
 
         }
