@@ -9,7 +9,7 @@ export default function useEvent() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('/api/Event/GetCategory', {
+                const response = await axios.get('/api/Category/GetCategory', {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Accept': 'application/json'

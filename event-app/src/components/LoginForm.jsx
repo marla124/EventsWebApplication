@@ -14,7 +14,7 @@ export default function LoginForm() {
     const data = { email, password };
 
     try {
-      const response = await axios.post("/api/Token/GenerateToken", data);
+      const response = await axios.post("/api/Auth/Login", data);
       if (response.status === 201 || response.status === 200) {
         const { jwtToken, refreshToken } = response.data;
         localStorage.setItem('jwtToken', jwtToken);
