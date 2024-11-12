@@ -10,7 +10,7 @@ using Xunit;
 
 namespace EventWebApplication.Tests
 {
-    public class EventServiceTests
+    public class EventUseCasesTests
     {
         private readonly IUnitOfWork _unitOfWorkMock;
         private readonly IMapper _mapperMock;
@@ -18,7 +18,7 @@ namespace EventWebApplication.Tests
         private readonly IGetEventByNameUseCase _getEventByNameUseCase;
         private readonly IGetUserRoleUseCase _getUserRoleUseCaseMock;
 
-        public EventServiceTests()
+        public EventUseCasesTests()
         {
             _unitOfWorkMock = Substitute.For<IUnitOfWork>();
             _mapperMock = Substitute.For<IMapper>();
@@ -44,45 +44,30 @@ namespace EventWebApplication.Tests
         }
 
         [Fact]
-        public async Task DeleteEventByIdAdmin_CheckExistEvent()
+        public async Task Execute_EventFound_DeletesEvent()
         {
             var eventId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
-            var userRole = new UserRoleDto { Role = "Admin" };
-            var eventInfo = new Event { Id = eventId, Name = "event" };
+            var eventEntity = new Event { Id = eventId, Name = "Test Event" };
 
-            await GeneralyLogicDelete(eventId, userId, userRole, eventInfo);
+            _unitOfWorkMock.EventRepository.GetById(eventId, CancellationToken.None)
+                .Returns(Task.FromResult(eventEntity));
+
+            await _deleteEventByIdUseCase.Execute(eventId, CancellationToken.None);
+
+            await _unitOfWorkMock.EventRepository.Received(1).DeleteById(eventEntity, CancellationToken.None);
+            await _unitOfWorkMock.EventRepository.Received(1).Commit(CancellationToken.None);
         }
 
         [Fact]
-        public async Task DeleteEventByIdCreatorUser_CheckExistEvent()
+        public async Task Execute_EventNotFound_ThrowsKeyNotFoundException()
         {
             var eventId = Guid.NewGuid();
-            var userId = Guid.NewGuid();
-            var userRole = new UserRoleDto { Role = "User" };
-            var eventDto = new EventDto { Id = eventId, UserCreatorId = userId, Name = "event" };
-            var eventInfo = new Event { Id = eventId, UserCreatorId = userId, Name = "event" };
 
-            _mapperMock.Map<EventDto>(eventInfo).Returns(eventDto);
-
-            await GeneralyLogicDelete(eventId, userId, userRole, eventInfo);
-        }
-
-        private async Task GeneralyLogicDelete(Guid eventId, Guid userId, UserRoleDto userRole, Event eventInfo)
-        {
             _unitOfWorkMock.EventRepository.GetById(eventId, CancellationToken.None)
-                .Returns(Task.FromResult(eventInfo));
-            _getUserRoleUseCaseMock.Execute(userId, CancellationToken.None)
-                .Returns(Task.FromResult(userRole));
-            _unitOfWorkMock.EventRepository.DeleteById(eventId, CancellationToken.None)
-                .Returns(Task.CompletedTask);
-            _unitOfWorkMock.EventRepository.Commit(CancellationToken.None)
-                .Returns(Task.CompletedTask);
+                .Returns(Task.FromResult<Event>(null));
 
-            await _deleteEventByIdUseCase.Execute(eventId, userId, CancellationToken.None);
-
-            await _unitOfWorkMock.EventRepository.Received(1).DeleteById(eventId, CancellationToken.None);
-            await _unitOfWorkMock.EventRepository.Received(1).Commit(CancellationToken.None);
+            await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+                _deleteEventByIdUseCase.Execute(eventId, CancellationToken.None));
         }
     }
 }

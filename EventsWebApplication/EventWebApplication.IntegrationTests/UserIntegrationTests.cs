@@ -5,23 +5,23 @@ using System.Text;
 
 namespace EventWebApplication.IntegrationTests
 {
-    public class UserControllerIntegrationTests : BaseIntegrationTest
+    public class UserIntegrationTests : BaseIntegrationTest
     {
-        private const string BaseUrl = "/api/User";
+        private const string BaseUrl = "/api/Auth";
 
         [Fact]
-        public async Task Create_ReturnSuccess()
+        public async Task Register_ReturnSuccess()
         {
             var model = new RegisterModel
             {
                 Name = "Name",
                 Surname = "Surname",
                 Email = "testemail3@gmail.com",
-                Password = "password",
-                PasswordConfirmation = "password"
+                Password = "password12345678",
+                PasswordConfirmation = "password12345678"
             };
             var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-            var uri = $"{BaseUrl}/CreateUser";
+            var uri = $"{BaseUrl}/Register";
             var response = await _httpClient.PostAsync(uri, content);
 
             response.EnsureSuccessStatusCode();

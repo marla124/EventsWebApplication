@@ -2,34 +2,36 @@ using System.Linq.Expressions;
 using AutoMapper;
 using Castle.Core.Configuration;
 using EventsWebApplication.Application.Dto;
+using EventsWebApplication.Application.UseCases.AuthUseCases;
 using EventsWebApplication.Application.UseCases.PasswordUseCases;
 using EventsWebApplication.Application.UseCases.UserUseCases;
 using EventsWebApplication.Application.UseCases.UserUseCases.Interface;
 using EventsWebApplication.Domain.Entities;
 using EventsWebApplication.Domain.Interfaces;
 using EventsWebApplication.Infrastructure;
+using EventsWebApplication.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventWebApplication.Tests
 {
-    public class UserServiceTests
+    public class UserUseCasesTests
     {
         private readonly IUnitOfWork _unitOfWorkMock;
         private readonly IConfiguration _configurationMock;
         private readonly IMapper _mapperMock;
-        private readonly IPasswordUseCase _passwordMock;
+        private readonly IPasswordService _passwordMock;
         private readonly IGetUserByEmailUseCase _getUserByEmailUseCase;
         private readonly IGetUserByIdUseCase _getUserByIdUseCase;
         private readonly IGetUserByRefreshTokenUseCase _getUserByRefreshTokenUseCase;
         private readonly IRegisterUserUseCase _registerUserUseCase;
 
-        public UserServiceTests()
+        public UserUseCasesTests()
         {
             _unitOfWorkMock = Substitute.For<IUnitOfWork>();
             _mapperMock = Substitute.For<IMapper>();
-            _passwordMock = Substitute.For<IPasswordUseCase>();
+            _passwordMock = Substitute.For<IPasswordService>();
             _getUserByEmailUseCase = new GetUserByEmailUseCase(_mapperMock, _unitOfWorkMock);
-            _getUserByIdUseCase = new GetUserByIdUseCase(_unitOfWorkMock.UserRepository, _mapperMock);
+            _getUserByIdUseCase = new GetUserByIdUseCase(_mapperMock, _unitOfWorkMock);
             _getUserByRefreshTokenUseCase = new GetUserByRefreshTokenUseCase(_mapperMock, _unitOfWorkMock);
             _registerUserUseCase = new RegisterUserUseCase(_unitOfWorkMock, _mapperMock, _passwordMock);
         }

@@ -23,7 +23,7 @@ const refreshToken = async () => {
   try {
     const storedRefreshToken = localStorage.getItem('refreshToken');
 
-    const response = await axios.post('/api/Token/GenerateTokenByRefresh', {
+    const response = await axios.post('/api/Auth/RefreshToken', {
       refreshToken: storedRefreshToken
     }, {
       headers: {
