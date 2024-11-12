@@ -1,10 +1,9 @@
 ﻿using EventsWebApplication.Domain.Entities;
 using EventsWebApplication.Domain.Interfaces;
-using EventsWebApplication.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace EventsWebApplication.Data.Repositories
+namespace EventsWebApplication.Infrastructure.Repositories
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
     {
@@ -22,19 +21,15 @@ namespace EventsWebApplication.Data.Repositories
             var resultQuery = _dbSet.AsQueryable();
             if (includes.Any())
             {
-                resultQuery = includes.Aggregate(resultQuery, 
+                resultQuery = includes.Aggregate(resultQuery,
                     (current, include) => current.Include(include));
             }
             return await resultQuery.FirstOrDefaultAsync(entity => entity.Id.Equals(id), cancellationToken);
         }
 
-        public virtual async Task DeleteById(Guid id, CancellationToken cancellationToken)
+        public virtual async Task DeleteById(TEntity entity, CancellationToken cancellationToken)
         {
-            var deleteEntity = await GetById(id, cancellationToken);
-            if (deleteEntity != null)
-            {
-                _dbSet.Remove(deleteEntity);
-            }
+            _dbSet.Remove(entity);
         }
 
         public virtual async Task<TEntity> CreateOne(TEntity entity, CancellationToken cancellationToken)

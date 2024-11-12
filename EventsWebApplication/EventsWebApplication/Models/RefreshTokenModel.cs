@@ -2,6 +2,6 @@
 {
     public class RefreshTokenModel
     {
-        public Guid RefreshToken { get; set; }  
+        public string RefreshToken { get; set; }  
     }
 }

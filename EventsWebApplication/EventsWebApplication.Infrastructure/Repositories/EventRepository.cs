@@ -1,5 +1,4 @@
-﻿using EventsWebApplication.Data.Repositories;
-using EventsWebApplication.Domain.Entities;
+﻿using EventsWebApplication.Domain.Entities;
 using EventsWebApplication.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -60,17 +59,17 @@ namespace EventsWebApplication.Infrastructure.Repositories
 
             return events;
         }
-        public async Task<List<User>?> GetEventParticipants(Guid eventId, CancellationToken cancellationToken)
-        {
-            var userEvents = await _dbContext.UserEventsTime
-                .Where(ue => ue.EventId == eventId)
-                .Include(ue => ue.User)
-                .ToListAsync(cancellationToken);
+            public async Task<List<User>?> GetEventParticipants(Guid eventId, CancellationToken cancellationToken)
+            {
+                var userEvents = await _dbContext.UserEventsTime
+                    .Where(ue => ue.EventId == eventId)
+                    .Include(ue => ue.User)
+                    .ToListAsync(cancellationToken);
 
-            var users = userEvents.Select(ue => ue.User).ToList();
+                var users = userEvents.Select(ue => ue.User).ToList();
 
-            return users;
-        }
+                return users;
+            }
 
         public async Task<List<Event>?> GetEventsByCriteria(DateTime? date, string? address, Guid? categoryId, CancellationToken cancellationToken)
         {

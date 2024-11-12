@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using EventsWebApplication.Infrastructure;
 using EventsWebApplication.Domain.Interfaces;
 using EventsWebApplication.Domain.Entities;
 
-namespace EventsWebApplication.Data.Repositories
+namespace EventsWebApplication.Infrastructure.Repositories
 {
     public class UserRepository : Repository<User>, IUserRepository
     {
