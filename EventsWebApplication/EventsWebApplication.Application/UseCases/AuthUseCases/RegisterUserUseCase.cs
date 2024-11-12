@@ -1,29 +1,18 @@
 ﻿using AutoMapper;
 using EventsWebApplication.Application.Dto;
 using EventsWebApplication.Application.UseCases.PasswordUseCases;
-using EventsWebApplication.Application.UseCases.UserUseCases.Interface;
 using EventsWebApplication.Domain.Entities;
 using EventsWebApplication.Domain.Interfaces;
+using EventsWebApplication.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace EventsWebApplication.Application.UseCases.UserUseCases
+namespace EventsWebApplication.Application.UseCases.AuthUseCases
 {
-    public class RegisterUserUseCase : IRegisterUserUseCase
+    public class RegisterUserUseCase(IUnitOfWork unitOfWork, IMapper mapper, IPasswordService passwordService) : IRegisterUserUseCase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly IPasswordUseCase _passwordUseCase;
-
-        public RegisterUserUseCase(IUnitOfWork unitOfWork, IMapper mapper, IPasswordUseCase passwordUseCase)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            _passwordUseCase = passwordUseCase;
-        }
-
         public async Task<UserDto> Execute(UserDto dto, CancellationToken cancellationToken)
         {
-            var userRole = await _unitOfWork.UserRoleRepository
+            var userRole = await unitOfWork.UserRoleRepository
                 .FindBy(role => role.Role.Equals("User"))
                 .FirstOrDefaultAsync(cancellationToken);
 
@@ -31,23 +20,27 @@ namespace EventsWebApplication.Application.UseCases.UserUseCases
             {
                 throw new KeyNotFoundException("User role not found");
             }
-
+            var existingUser = await unitOfWork.UserRepository.GetByEmail(dto.Email, cancellationToken);
+            if (existingUser != null)
+            {
+                throw new InvalidOperationException("User already exists");
+            }
             var user = new User()
             {
                 Id = Guid.NewGuid(),
                 Name = dto.Name,
                 Surname = dto.Surname,
                 Email = dto.Email,
-                PasswordHash = _passwordUseCase.MdHashGenerate(dto.Password),
+                PasswordHash = passwordService.MdHashGenerate(dto.Password),
                 UpdatedAt = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
                 UserRoleId = userRole.Id,
             };
 
-            await _unitOfWork.UserRepository.CreateOne(user, cancellationToken);
-            await _unitOfWork.UserRepository.Commit(cancellationToken);
+            await unitOfWork.UserRepository.CreateOne(user, cancellationToken);
+            await unitOfWork.UserRepository.Commit(cancellationToken);
 
-            return _mapper.Map<UserDto>(user);
+            return mapper.Map<UserDto>(user);
         }
     }
 }

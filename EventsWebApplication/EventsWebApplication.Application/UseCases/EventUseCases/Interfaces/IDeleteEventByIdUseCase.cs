@@ -2,5 +2,5 @@
 
 public interface IDeleteEventByIdUseCase
 {
-    public Task Execute(Guid id, Guid userId, CancellationToken cancellationToken);
+    public Task Execute(Guid id, CancellationToken cancellationToken);
 }

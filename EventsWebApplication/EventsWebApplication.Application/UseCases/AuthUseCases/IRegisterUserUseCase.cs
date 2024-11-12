@@ -1,6 +1,6 @@
 ﻿using EventsWebApplication.Application.Dto;
 
-namespace EventsWebApplication.Application.UseCases.UserUseCases.Interface
+namespace EventsWebApplication.Application.UseCases.AuthUseCases
 {
     public interface IRegisterUserUseCase
     {

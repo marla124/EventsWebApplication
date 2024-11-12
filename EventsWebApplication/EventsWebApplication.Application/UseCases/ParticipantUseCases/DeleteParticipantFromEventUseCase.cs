@@ -14,6 +14,16 @@ public class DeleteParticipantFromEventUseCase : IDeleteParticipantFromEventUseC
     }
     public async Task Execute(Guid userId, Guid eventId, CancellationToken cancellationToken)
     {
+        var eventInfo = await _unitOfWork.EventRepository.GetById(eventId, cancellationToken);
+        if (eventInfo == null)
+        {
+            throw new KeyNotFoundException("Event not found");
+        }
+        var user = await _unitOfWork.UserRepository.GetById(userId, cancellationToken);
+        if (user == null)
+        {
+            throw new KeyNotFoundException("User not found");
+        }
         var userEventConnection = await _unitOfWork.EventRepository.GetUserEventConnection(userId, eventId, cancellationToken);
 
         if (userEventConnection == null)

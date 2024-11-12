@@ -1,10 +1,9 @@
 ﻿using EventsWebApplication.Application.Dto;
-using EventsWebApplication.Application.UseCases.GeneralUseCases.Interface;
 
 namespace EventsWebApplication.Application.UseCases.EventUseCases.Interfaces
 {
-    public interface IGetEventByIdUseCase : IGetByIdUseCase<EventDto>
+    public interface IGetEventByIdUseCase
     {
-
+        public Task<EventDto> Execute(Guid id, CancellationToken cancellationToken);
     }
 }

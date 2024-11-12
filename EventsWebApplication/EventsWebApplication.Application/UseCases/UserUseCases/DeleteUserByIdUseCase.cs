@@ -20,7 +20,7 @@ namespace EventsWebApplication.Application.UseCases.UserUseCases
                 throw new KeyNotFoundException("User not found");
             }
 
-            await _unitOfWork.UserRepository.DeleteById(userId, cancellationToken);
+            await _unitOfWork.UserRepository.DeleteById(user, cancellationToken);
             await _unitOfWork.UserRepository.Commit(cancellationToken);
         }
     }

@@ -1,16 +1,20 @@
 ﻿using AutoMapper;
 using EventsWebApplication.Application.Dto;
 using EventsWebApplication.Application.UseCases.EventUseCases.Interfaces;
-using EventsWebApplication.Application.UseCases.GeneralUseCases;
-using EventsWebApplication.Domain.Entities;
 using EventsWebApplication.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventsWebApplication.Application.UseCases.EventUseCases
 {
-    public class GetEventsUseCase : GetManyUseCase<EventDto, Event>, IGetEventsUseCase
+    public class GetEventsUseCase(IMapper mapper, IUnitOfWork unitOfWork) : IGetEventsUseCase
     {
-        public GetEventsUseCase(IEventRepository repository, IMapper mapper) : base(repository, mapper)
+        public async Task<EventDto[]> Execute(CancellationToken cancellationToken)
         {
+            var dtoarr = await unitOfWork.EventRepository
+                .GetAsQueryable()
+                .Select(dto => mapper.Map<EventDto>(dto))
+                .ToArrayAsync(cancellationToken);
+            return dtoarr;
         }
     }
 }
