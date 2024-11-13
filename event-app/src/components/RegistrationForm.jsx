@@ -17,7 +17,7 @@ export default function RegistrationForm() {
     const data = { email, name, surname, password, passwordConfirmation };
     try {
       const response = await
-        axios.post("/api/User/CreateUser", data);
+        axios.post("/api/Auth/Register", data);
       if (response.status === 201 || response.status === 200) {
         navigate('/login');
       }

@@ -18,20 +18,7 @@ public class CreateEventUseCase : ICreateEventUseCase
     }
     public async Task<EventDto> Execute(EventDto dto, CancellationToken cancellationToken)
     {
-        var eventInfo = new Event()
-        {
-            Id = Guid.NewGuid(),
-            Name = dto.Name,
-            Description = dto.Description,
-            DateAndTime = dto.DateAndTime,
-            CategoryId = dto.CategoryId,
-            UserCreatorId = dto.UserCreatorId,
-            MaxNumberOfPeople = dto.MaxNumberOfPeople,
-            Address = dto.Address,
-            Image = dto.Image,
-            CreatedAt = DateTime.UtcNow,
-        };
-        var createdEntity = await _unitOfWork.EventRepository.CreateOne(eventInfo, cancellationToken);
+        var createdEntity = await _unitOfWork.EventRepository.CreateOne(_mapper.Map<Event>(dto), cancellationToken);
         await _unitOfWork.EventRepository.Commit(cancellationToken);
         return _mapper.Map<EventDto>(createdEntity);
     }

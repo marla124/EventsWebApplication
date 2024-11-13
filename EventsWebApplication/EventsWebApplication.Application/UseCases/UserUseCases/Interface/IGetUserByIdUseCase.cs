@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EventsWebApplication.Application.Dto;
-using EventsWebApplication.Application.UseCases.GeneralUseCases.Interface;
+﻿using EventsWebApplication.Application.Dto;
 
 namespace EventsWebApplication.Application.UseCases.UserUseCases.Interface
 {
-    public interface IGetUserByIdUseCase : IGetByIdUseCase<UserDto>
+    public interface IGetUserByIdUseCase
     {
+        public Task<UserDto> Execute(Guid id, CancellationToken cancellationToken);
     }
 }

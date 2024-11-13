@@ -3,26 +3,20 @@ using EventsWebApplication.Domain.Interfaces;
 
 namespace EventsWebApplication.Application.UseCases.EventUseCases
 {
-    public class DeleteEventByIdUseCase : IDeleteEventByIdUseCase
+    public class DeleteEventByIdUseCase(IUnitOfWork unitOfWork) : IDeleteEventByIdUseCase
     {
-        private readonly IUnitOfWork _unitOfWork;
 
-        public DeleteEventByIdUseCase(IUnitOfWork unitOfWork)
+        public async Task Execute(Guid eventId, CancellationToken cancellationToken)
         {
-            _unitOfWork = unitOfWork;
-        }
-
-        public async Task Execute(Guid eventId, Guid userId, CancellationToken cancellationToken)
-        {
-            var eventEntity = await _unitOfWork.EventRepository.GetById(eventId, cancellationToken);
+            var eventEntity = await unitOfWork.EventRepository.GetById(eventId, cancellationToken);
 
             if (eventEntity == null)
             {
                 throw new KeyNotFoundException("Event not found");
             }
 
-            await _unitOfWork.EventRepository.DeleteById(eventId, cancellationToken);
-            await _unitOfWork.EventRepository.Commit(cancellationToken);
+            await unitOfWork.EventRepository.DeleteById(eventEntity, cancellationToken);
+            await unitOfWork.EventRepository.Commit(cancellationToken);
         }
     }
 }

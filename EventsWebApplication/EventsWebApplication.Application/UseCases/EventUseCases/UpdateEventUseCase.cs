@@ -17,9 +17,7 @@ namespace EventsWebApplication.Application.UseCases.EventUseCases
         }
         public async Task<UpdateEventDto> Execute(UpdateEventDto dto, Guid userId, CancellationToken cancellationToken)
         {
-            var existingEvent = await _unitOfWork.EventRepository
-                .GetAsQueryable()
-                .FirstOrDefaultAsync(e => e.Id == dto.Id, cancellationToken);
+            var existingEvent = await _unitOfWork.EventRepository.GetById(dto.Id, cancellationToken);
 
             if (existingEvent == null)
             {

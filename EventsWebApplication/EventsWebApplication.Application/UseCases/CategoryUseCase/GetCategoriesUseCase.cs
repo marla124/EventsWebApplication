@@ -1,15 +1,19 @@
 ﻿using AutoMapper;
 using EventsWebApplication.Application.Dto;
-using EventsWebApplication.Application.UseCases.GeneralUseCases;
-using EventsWebApplication.Domain.Entities;
 using EventsWebApplication.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventsWebApplication.Application.UseCases.CategoryUseCase
 {
-    public class GetCategoriesUseCase : GetManyUseCase<CategoryDto, Category>, IGetCategoriesUseCase
+    public class GetCategoriesUseCase(IMapper mapper, IUnitOfWork unitOfWork) : IGetCategoriesUseCase
     {
-        public GetCategoriesUseCase(IRepository<Category> repository, IMapper mapper) : base(repository, mapper)
+        public async Task<CategoryDto[]?> Execute(CancellationToken cancellationToken)
         {
+            var dtoarr = await unitOfWork.CategoryRepository
+                .GetAsQueryable()
+                .Select(dto => mapper.Map<CategoryDto>(dto))
+                .ToArrayAsync(cancellationToken);
+            return dtoarr;
         }
     }
 }

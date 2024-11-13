@@ -15,6 +15,11 @@ namespace EventsWebApplication.Application.UseCases.ParticipantUseCases
 
         public async Task Execute(Guid userId, Guid eventId, CancellationToken cancellationToken)
         {
+            var user = await _unitOfWork.UserRepository.GetById(userId, cancellationToken);
+            if (user == null)
+            {
+                throw new KeyNotFoundException("User not found");
+            }
             var userEvent = await _unitOfWork.EventRepository.GetUserEventConnection(userId, eventId, cancellationToken);
             if (userEvent != null)
             {

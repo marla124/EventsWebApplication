@@ -39,7 +39,7 @@ export default function EventPage() {
     }, [eventId, token]);
 
     const handleRegistration = () => {
-        axios.post(`/api/Practicant/AddParticipantToEvent/${eventId}`, {}, {
+        axios.post(`/api/Participant/AddParticipantToEvent/${eventId}`, {}, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Accept': 'application/json'

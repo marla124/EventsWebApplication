@@ -1,39 +1,22 @@
 ﻿using AutoMapper;
 using EventsWebApplication.Application.Dto;
 using EventsWebApplication.Application.UseCases.EventUseCases.Interfaces;
+using EventsWebApplication.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 
-namespace EventsWebApplication.Application.UseCases.EventUseCases
+public class UploadImageUseCase(IMapper mapper, IGetEventByIdUseCase getEventByIdUseCase, IImageService imageService, IUpdateEventUseCase updateEventUseCase) 
+    : IUploadImageUseCase
 {
-    public class UploadImageUseCase : IUploadImageUseCase
+    public async Task Execute(Guid eventId, Guid userId, IFormFile file, CancellationToken cancellationToken)
     {
-        private readonly IMapper _mapper;
-        private readonly IGetEventByIdUseCase _getEventByIdUseCase;
-        public UploadImageUseCase(IMapper mapper, IGetEventByIdUseCase getEventByIdUseCase)
+        var imageData = await imageService.ConvertImageToByteArrayAsync(file, cancellationToken);
+
+        var eventToUpdate = mapper.Map<UpdateEventDto>(await getEventByIdUseCase.Execute(eventId, cancellationToken));
+        if (eventToUpdate == null)
         {
-            _mapper = mapper;
-            _getEventByIdUseCase = getEventByIdUseCase;
+            throw new KeyNotFoundException("Event not found");
         }
-
-        public async Task Execute(Guid eventId, Guid userId, IFormFile file, CancellationToken cancellationToken)
-        {
-            if (file == null || file.Length == 0)
-            {
-                throw new InvalidOperationException();
-            }
-
-            byte[] imageData;
-            using (var memoryStream = new MemoryStream())
-            {
-                await file.CopyToAsync(memoryStream);
-                imageData = memoryStream.ToArray();
-            }
-
-            var eventToUpdate = _mapper.Map<UpdateEventDto>(await _getEventByIdUseCase.Execute(eventId, cancellationToken));
-            if (eventToUpdate == null)
-            {
-                throw new KeyNotFoundException();
-            }
-        }
+        eventToUpdate.Image = imageData;
+        await updateEventUseCase.Execute(eventToUpdate, userId, cancellationToken);
     }
 }

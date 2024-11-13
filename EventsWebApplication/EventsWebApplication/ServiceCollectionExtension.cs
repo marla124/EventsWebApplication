@@ -1,10 +1,7 @@
 ﻿using System.Text;
-using EventsWebApplication.Application.Dto;
 using EventsWebApplication.Application.UseCases.CategoryUseCase;
 using EventsWebApplication.Application.UseCases.EventUseCases;
 using EventsWebApplication.Application.UseCases.EventUseCases.Interfaces;
-using EventsWebApplication.Application.UseCases.GeneralUseCases;
-using EventsWebApplication.Application.UseCases.GeneralUseCases.Interface;
 using EventsWebApplication.Application.UseCases.ParticipantUseCases;
 using EventsWebApplication.Application.UseCases.ParticipantUseCases.Interface;
 using EventsWebApplication.Application.UseCases.PasswordUseCases;
@@ -12,15 +9,16 @@ using EventsWebApplication.Application.UseCases.TokenUseCases;
 using EventsWebApplication.Application.UseCases.TokenUseCases.Interface;
 using EventsWebApplication.Application.UseCases.UserUseCases;
 using EventsWebApplication.Application.UseCases.UserUseCases.Interface;
-using EventsWebApplication.Data.Repositories;
+using EventsWebApplication.Infrastructure.Repositories;
+using EventsWebApplication.Infrastructure.Services;
 using EventsWebApplication.Domain.Entities;
 using EventsWebApplication.Domain.Interfaces;
 using EventsWebApplication.Infrastructure;
-using EventsWebApplication.Infrastructure.Repositories;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using EventsWebApplication.Application.UseCases.AuthUseCases;
 
 namespace EventsWebApplication
 {
@@ -39,8 +37,13 @@ namespace EventsWebApplication
             services.AddScoped<IRepository<Category>, Repository<Category>>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             
-            services.AddScoped<IPasswordUseCase, PasswordUseCase>();
+            services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IPasswordService, PasswordService>();
+            services.AddScoped<ITokenService, TokenService>();
+
+            services.AddScoped<ICheckPasswordUseCase, CheckPasswordUseCase>();
             services.AddScoped<IGetUserRoleUseCase, GetUserRoleUseCase>();
+            services.AddScoped<ILoginUseCase, LoginUseCase>();
             services.AddScoped<IGetUserByRefreshTokenUseCase, GetUserByRefreshTokenUseCase>();
             services.AddScoped<IGetUserByEmailUseCase, GetUserByEmailUseCase>();
             services.AddScoped<IRegisterUserUseCase, RegisterUserUseCase>();
@@ -56,17 +59,16 @@ namespace EventsWebApplication
             services.AddScoped<IDeleteParticipantFromEventUseCase, DeleteParticipantFromEventUseCase>();
             services.AddScoped<IGetEventParticipantByIdUseCase, GetEventParticipantByIdUseCase>();
             services.AddScoped<IGetEventParticipantsUseCase, GetEventParticipantsUseCase>();
-            services.AddScoped<IAddRefreshTokenUseCase, AddRefreshTokenUseCase>();
-            services.AddScoped<ICheckRefreshTokenUseCase, CheckRefreshTokenUseCase>();
             services.AddScoped<IGenerateJwtTokenUseCase, GenerateJwtTokenUseCase>();
             services.AddScoped<IRemoveRefreshTokenUseCase, RemoveRefreshTokenUseCase>();
             services.AddScoped<IGetEventByIdUseCase, GetEventByIdUseCase>();
             services.AddScoped<IGetUserByIdUseCase, GetUserByIdUseCase>();
             services.AddScoped<IGetUsersUseCase, GetUsersUseCase>();
             services.AddScoped<IGetEventsUseCase, GetEventsUseCase>();
+            services.AddScoped<IUpdateRefreshTokenUseCase, UpdateRefreshTokenUseCase>();
             services.AddScoped<IGetCategoriesUseCase, GetCategoriesUseCase>();
-            
-            
+
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             
             services.AddCors(options =>
