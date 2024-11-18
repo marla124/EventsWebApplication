@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using EventsWebApplication.Application.Dto;
 using EventsWebApplication.Domain.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace EventsWebApplication.Application.UseCases.CategoryUseCase
 {
@@ -9,11 +8,10 @@ namespace EventsWebApplication.Application.UseCases.CategoryUseCase
     {
         public async Task<CategoryDto[]?> Execute(CancellationToken cancellationToken)
         {
-            var dtoarr = await unitOfWork.CategoryRepository
-                .GetAsQueryable()
-                .Select(dto => mapper.Map<CategoryDto>(dto))
-                .ToArrayAsync(cancellationToken);
-            return dtoarr;
+            var categories = await unitOfWork.CategoryRepository.GetCategories(cancellationToken);
+
+            var dtoArr = categories.Select(category => mapper.Map<CategoryDto>(category)).ToArray();
+            return dtoArr;
         }
     }
 }

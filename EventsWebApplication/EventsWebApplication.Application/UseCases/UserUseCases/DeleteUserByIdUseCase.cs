@@ -3,25 +3,18 @@ using EventsWebApplication.Domain.Interfaces;
 
 namespace EventsWebApplication.Application.UseCases.UserUseCases
 {
-    public class DeleteUserByIdUseCase : IDeleteUserByIdUseCase
+    public class DeleteUserByIdUseCase(IUnitOfWork unitOfWork) : IDeleteUserByIdUseCase
     {
-        private readonly IUnitOfWork _unitOfWork;
-
-        public DeleteUserByIdUseCase(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
-
         public async Task Execute(Guid userId, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.UserRepository.GetById(userId, cancellationToken);
+            var user = await unitOfWork.UserRepository.GetById(userId, cancellationToken);
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found");
             }
 
-            await _unitOfWork.UserRepository.DeleteById(user, cancellationToken);
-            await _unitOfWork.UserRepository.Commit(cancellationToken);
+            await unitOfWork.UserRepository.DeleteById(user, cancellationToken);
+            await unitOfWork.UserRepository.Commit(cancellationToken);
         }
     }
 }

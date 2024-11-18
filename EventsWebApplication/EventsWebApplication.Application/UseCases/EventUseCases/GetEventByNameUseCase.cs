@@ -5,25 +5,17 @@ using EventsWebApplication.Domain.Interfaces;
 
 namespace EventsWebApplication.Application.UseCases.EventUseCases
 {
-    public class GetEventByNameUseCase : IGetEventByNameUseCase
+    public class GetEventByNameUseCase(IUnitOfWork unitOfWork, IMapper mapper) : IGetEventByNameUseCase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-
-        public GetEventByNameUseCase(IMapper mapper, IUnitOfWork unitOfWork)
-        {
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
-        }
         public async Task<EventDto> Execute(string name, CancellationToken cancellationToken)
         {
-            var eventEntity = await _unitOfWork.EventRepository.GetByName(name, cancellationToken);
+            var eventEntity = await unitOfWork.EventRepository.GetByName(name, cancellationToken);
             if (eventEntity == null)
             {
                 throw new KeyNotFoundException("Event not found");
             }
 
-            return _mapper.Map<EventDto>(eventEntity);
+            return mapper.Map<EventDto>(eventEntity);
         }
     }
 }

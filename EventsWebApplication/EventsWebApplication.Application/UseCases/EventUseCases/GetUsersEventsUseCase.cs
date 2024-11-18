@@ -5,27 +5,18 @@ using EventsWebApplication.Domain.Interfaces;
 
 namespace EventsWebApplication.Application.UseCases.EventUseCases
 {
-    public class GetUsersEventsUseCase : IGetUsersEventsUseCase
+    public class GetUsersEventsUseCase(IUnitOfWork unitOfWork, IMapper mapper) : IGetUsersEventsUseCase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-
-        public GetUsersEventsUseCase(IMapper mapper, IUnitOfWork unitOfWork)
-        {
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
-        }
-
         public async Task<List<EventDto>?> Execute(Guid userId, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.UserRepository.GetById(userId, cancellationToken);
+            var user = await unitOfWork.UserRepository.GetById(userId, cancellationToken);
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found");
             }
 
-            var events = await _unitOfWork.EventRepository.GetUsersEvents(userId, cancellationToken);
-            return _mapper.Map<List<EventDto>?>(events);
+            var events = await unitOfWork.EventRepository.GetUsersEvents(userId, cancellationToken);
+            return mapper.Map<List<EventDto>?>(events);
         }
     }
 }

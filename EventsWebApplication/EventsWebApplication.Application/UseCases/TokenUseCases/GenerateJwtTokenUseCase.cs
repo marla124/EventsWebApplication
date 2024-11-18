@@ -7,7 +7,7 @@ using EventsWebApplication.Application.UseCases.PasswordUseCases;
 using EventsWebApplication.Application.UseCases.TokenUseCases.Interface;
 using EventsWebApplication.Application.UseCases.UserUseCases.Interface;
 using EventsWebApplication.Domain.Entities;
-using EventsWebApplication.Infrastructure.Services;
+using EventsWebApplication.Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 

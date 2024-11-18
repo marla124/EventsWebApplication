@@ -1,5 +1,4 @@
 ﻿using EventsWebApplication.Domain.Interfaces;
-using EventsWebApplication.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventsWebApplication.Application.UseCases.PasswordUseCases
