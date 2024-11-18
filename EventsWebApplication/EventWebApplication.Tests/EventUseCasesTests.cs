@@ -5,26 +5,25 @@ using EventsWebApplication.Application.Dto;
 using EventsWebApplication.Application.UseCases.EventUseCases;
 using EventsWebApplication.Application.UseCases.EventUseCases.Interfaces;
 using EventsWebApplication.Application.UseCases.UserUseCases.Interface;
-using NSubstitute;
-using Xunit;
+using Moq;
 
 namespace EventWebApplication.Tests
 {
     public class EventUseCasesTests
     {
-        private readonly IUnitOfWork _unitOfWorkMock;
-        private readonly IMapper _mapperMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<IMapper> _mapperMock;
         private readonly IDeleteEventByIdUseCase _deleteEventByIdUseCase;
         private readonly IGetEventByNameUseCase _getEventByNameUseCase;
-        private readonly IGetUserRoleUseCase _getUserRoleUseCaseMock;
+        private readonly Mock<IGetUserRoleUseCase> _getUserRoleUseCaseMock;
 
         public EventUseCasesTests()
         {
-            _unitOfWorkMock = Substitute.For<IUnitOfWork>();
-            _mapperMock = Substitute.For<IMapper>();
-            _getEventByNameUseCase = new GetEventByNameUseCase(_mapperMock, _unitOfWorkMock);
-            _deleteEventByIdUseCase = new DeleteEventByIdUseCase(_unitOfWorkMock);
-            _getUserRoleUseCaseMock = Substitute.For<IGetUserRoleUseCase>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _mapperMock = new Mock<IMapper>();
+            _getEventByNameUseCase = new GetEventByNameUseCase(_unitOfWorkMock.Object, _mapperMock.Object);
+            _deleteEventByIdUseCase = new DeleteEventByIdUseCase(_unitOfWorkMock.Object);
+            _getUserRoleUseCaseMock = new Mock<IGetUserRoleUseCase>();
         }
 
         [Fact]
@@ -34,13 +33,14 @@ namespace EventWebApplication.Tests
             var eventInfo = new Event { Name = name };
             var eventDto = new EventDto { Name = name };
 
-            _unitOfWorkMock.EventRepository.GetByName(name, CancellationToken.None).Returns(Task.FromResult(eventInfo));
-            _mapperMock.Map<EventDto>(eventInfo).Returns(eventDto);
+            _unitOfWorkMock.Setup(u => u.EventRepository.GetByName(name, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(eventInfo);
+            _mapperMock.Setup(m => m.Map<EventDto>(eventInfo)).Returns(eventDto);
 
             var result = await _getEventByNameUseCase.Execute(name, CancellationToken.None);
 
             Assert.NotNull(result);
-            Assert.Equal(result.Name, name);
+            Assert.Equal(name, result.Name);
         }
 
         [Fact]
@@ -49,13 +49,13 @@ namespace EventWebApplication.Tests
             var eventId = Guid.NewGuid();
             var eventEntity = new Event { Id = eventId, Name = "Test Event" };
 
-            _unitOfWorkMock.EventRepository.GetById(eventId, CancellationToken.None)
-                .Returns(Task.FromResult(eventEntity));
+            _unitOfWorkMock.Setup(u => u.EventRepository.GetById(eventId, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(eventEntity);
 
             await _deleteEventByIdUseCase.Execute(eventId, CancellationToken.None);
 
-            await _unitOfWorkMock.EventRepository.Received(1).DeleteById(eventEntity, CancellationToken.None);
-            await _unitOfWorkMock.EventRepository.Received(1).Commit(CancellationToken.None);
+            _unitOfWorkMock.Verify(u => u.EventRepository.DeleteById(eventEntity, It.IsAny<CancellationToken>()), Times.Once);
+            _unitOfWorkMock.Verify(u => u.EventRepository.Commit(It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -63,8 +63,8 @@ namespace EventWebApplication.Tests
         {
             var eventId = Guid.NewGuid();
 
-            _unitOfWorkMock.EventRepository.GetById(eventId, CancellationToken.None)
-                .Returns(Task.FromResult<Event>(null));
+            _unitOfWorkMock.Setup(u => u.EventRepository.GetById(eventId, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((Event)null);
 
             await Assert.ThrowsAsync<KeyNotFoundException>(() =>
                 _deleteEventByIdUseCase.Execute(eventId, CancellationToken.None));

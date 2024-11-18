@@ -4,36 +4,29 @@ using EventsWebApplication.Domain.Interfaces;
 
 namespace EventsWebApplication.Application.UseCases.ParticipantUseCases
 {
-    public class AddParticipantToEventUseCase : IAddParticipantToEventUseCase
+    public class AddParticipantToEventUseCase(IUnitOfWork unitOfWork) : IAddParticipantToEventUseCase
     {
-        private readonly IUnitOfWork _unitOfWork;
-
-        public AddParticipantToEventUseCase(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
-
         public async Task Execute(Guid userId, Guid eventId, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.UserRepository.GetById(userId, cancellationToken);
+            var user = await unitOfWork.UserRepository.GetById(userId, cancellationToken);
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found");
             }
-            var userEvent = await _unitOfWork.EventRepository.GetUserEventConnection(userId, eventId, cancellationToken);
+            var userEvent = await unitOfWork.EventRepository.GetUserEventConnection(userId, eventId, cancellationToken);
             if (userEvent != null)
             {
                 throw new InvalidOperationException("User is already a participant of the event");
             }
 
-            var eventInfo = await _unitOfWork.EventRepository.GetById(eventId, cancellationToken);
+            var eventInfo = await unitOfWork.EventRepository.GetById(eventId, cancellationToken);
             if (eventInfo == null)
             {
                 throw new KeyNotFoundException("Event not found");
             }
 
             var maxNumber = eventInfo.MaxNumberOfPeople;
-            var numberOfPeopleNow = await _unitOfWork.EventRepository.GetEventParticipantsCount(eventId, cancellationToken);
+            var numberOfPeopleNow = await unitOfWork.ParticipantRepository.GetEventParticipantsCount(eventId, cancellationToken);
 
             if (numberOfPeopleNow >= maxNumber)
             {
@@ -47,8 +40,8 @@ namespace EventsWebApplication.Application.UseCases.ParticipantUseCases
                 RegistrationDate = DateTime.UtcNow
             };
 
-            await _unitOfWork.EventRepository.AddParticipantToEvent(userEventTime, cancellationToken);
-            await _unitOfWork.EventRepository.Commit(cancellationToken);
+            await unitOfWork.ParticipantRepository.AddParticipantToEvent(userEventTime, cancellationToken);
+            await unitOfWork.EventRepository.Commit(cancellationToken);
         }
     }
 }

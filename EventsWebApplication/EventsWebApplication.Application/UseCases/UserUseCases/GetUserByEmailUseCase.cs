@@ -5,27 +5,18 @@ using EventsWebApplication.Domain.Interfaces;
 
 namespace EventsWebApplication.Application.UseCases.UserUseCases
 {
-    public class GetUserByEmailUseCase : IGetUserByEmailUseCase
+    public class GetUserByEmailUseCase(IUnitOfWork unitOfWork, IMapper mapper) : IGetUserByEmailUseCase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-
-        public GetUserByEmailUseCase(IMapper mapper, IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
-
         public async Task<UserDto> Execute(string email, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.UserRepository.GetByEmail(email, cancellationToken);
+            var user = await unitOfWork.UserRepository.GetByEmail(email, cancellationToken);
 
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found");
             }
 
-            return _mapper.Map<UserDto>(user);
+            return mapper.Map<UserDto>(user);
         }
     }
 }

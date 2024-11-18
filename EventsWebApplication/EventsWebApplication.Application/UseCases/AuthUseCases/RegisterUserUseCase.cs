@@ -3,7 +3,6 @@ using EventsWebApplication.Application.Dto;
 using EventsWebApplication.Application.UseCases.PasswordUseCases;
 using EventsWebApplication.Domain.Entities;
 using EventsWebApplication.Domain.Interfaces;
-using EventsWebApplication.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventsWebApplication.Application.UseCases.AuthUseCases

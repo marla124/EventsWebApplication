@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EventsWebApplication.Domain.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace EventsWebApplication.Infrastructure.Services;
 public class ImageService : IImageService

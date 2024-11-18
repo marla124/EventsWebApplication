@@ -32,9 +32,10 @@ namespace EventsWebApplication
             
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IParticipantRepository, ParticipantRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IRepository<UserRole>, Repository<UserRole>>();
-            services.AddScoped<IRepository<Category>, Repository<Category>>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             
             services.AddScoped<IImageService, ImageService>();
@@ -54,7 +55,6 @@ namespace EventsWebApplication
             services.AddScoped<IGetEventsByCriteriaUseCase, GetEventsByCriteriaUseCase>();
             services.AddScoped<IGetUsersEventsUseCase, GetUsersEventsUseCase>();
             services.AddScoped<IUpdateEventUseCase, UpdateEventUseCase>();
-            services.AddScoped<IUploadImageUseCase, UploadImageUseCase>();
             services.AddScoped<IAddParticipantToEventUseCase, AddParticipantToEventUseCase>();
             services.AddScoped<IDeleteParticipantFromEventUseCase, DeleteParticipantFromEventUseCase>();
             services.AddScoped<IGetEventParticipantByIdUseCase, GetEventParticipantByIdUseCase>();
@@ -63,8 +63,6 @@ namespace EventsWebApplication
             services.AddScoped<IRemoveRefreshTokenUseCase, RemoveRefreshTokenUseCase>();
             services.AddScoped<IGetEventByIdUseCase, GetEventByIdUseCase>();
             services.AddScoped<IGetUserByIdUseCase, GetUserByIdUseCase>();
-            services.AddScoped<IGetUsersUseCase, GetUsersUseCase>();
-            services.AddScoped<IGetEventsUseCase, GetEventsUseCase>();
             services.AddScoped<IUpdateRefreshTokenUseCase, UpdateRefreshTokenUseCase>();
             services.AddScoped<IGetCategoriesUseCase, GetCategoriesUseCase>();
 

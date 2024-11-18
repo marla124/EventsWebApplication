@@ -5,24 +5,17 @@ using EventsWebApplication.Domain.Interfaces;
 
 namespace EventsWebApplication.Application.UseCases.UserUseCases
 {
-    public class GetUserRoleUseCase : IGetUserRoleUseCase
+    public class GetUserRoleUseCase(IUnitOfWork unitOfWork, IMapper mapper) : IGetUserRoleUseCase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        public GetUserRoleUseCase(IMapper mapper, IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-        }
         public async Task<UserRoleDto> Execute(Guid userId, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.UserRepository.GetById(userId, cancellationToken);
+            var user = await unitOfWork.UserRepository.GetById(userId, cancellationToken);
             if (user == null)
             {
                 throw new KeyNotFoundException(nameof(user));
             }
-            var role = await _unitOfWork.UserRoleRepository.GetById(user.UserRoleId, cancellationToken);
-            return _mapper.Map<UserRoleDto>(role);
+            var role = await unitOfWork.UserRoleRepository.GetById(user.UserRoleId, cancellationToken);
+            return mapper.Map<UserRoleDto>(role);
         }
     }
 }
