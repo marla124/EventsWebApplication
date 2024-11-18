@@ -1,4 +1,4 @@
-﻿namespace EventsWebApplication.Infrastructure.Services
+﻿namespace EventsWebApplication.Domain.Interfaces
 {
     public interface IPasswordService
     {
