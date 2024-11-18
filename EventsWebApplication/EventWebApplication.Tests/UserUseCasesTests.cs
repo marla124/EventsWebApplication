@@ -1,25 +1,22 @@
 using System.Linq.Expressions;
 using AutoMapper;
-using Castle.Core.Configuration;
 using EventsWebApplication.Application.Dto;
 using EventsWebApplication.Application.UseCases.AuthUseCases;
-using EventsWebApplication.Application.UseCases.PasswordUseCases;
 using EventsWebApplication.Application.UseCases.UserUseCases;
 using EventsWebApplication.Application.UseCases.UserUseCases.Interface;
 using EventsWebApplication.Domain.Entities;
 using EventsWebApplication.Domain.Interfaces;
 using EventsWebApplication.Infrastructure;
-using EventsWebApplication.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace EventWebApplication.Tests
 {
     public class UserUseCasesTests
     {
-        private readonly IUnitOfWork _unitOfWorkMock;
-        private readonly IConfiguration _configurationMock;
-        private readonly IMapper _mapperMock;
-        private readonly IPasswordService _passwordMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<IMapper> _mapperMock;
+        private readonly Mock<IPasswordService> _passwordMock;
         private readonly IGetUserByEmailUseCase _getUserByEmailUseCase;
         private readonly IGetUserByIdUseCase _getUserByIdUseCase;
         private readonly IGetUserByRefreshTokenUseCase _getUserByRefreshTokenUseCase;
@@ -27,13 +24,13 @@ namespace EventWebApplication.Tests
 
         public UserUseCasesTests()
         {
-            _unitOfWorkMock = Substitute.For<IUnitOfWork>();
-            _mapperMock = Substitute.For<IMapper>();
-            _passwordMock = Substitute.For<IPasswordService>();
-            _getUserByEmailUseCase = new GetUserByEmailUseCase(_mapperMock, _unitOfWorkMock);
-            _getUserByIdUseCase = new GetUserByIdUseCase(_mapperMock, _unitOfWorkMock);
-            _getUserByRefreshTokenUseCase = new GetUserByRefreshTokenUseCase(_mapperMock, _unitOfWorkMock);
-            _registerUserUseCase = new RegisterUserUseCase(_unitOfWorkMock, _mapperMock, _passwordMock);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _mapperMock = new Mock<IMapper>();
+            _passwordMock = new Mock<IPasswordService>();
+            _getUserByEmailUseCase = new GetUserByEmailUseCase(_unitOfWorkMock.Object, _mapperMock.Object);
+            _getUserByIdUseCase = new GetUserByIdUseCase(_mapperMock.Object, _unitOfWorkMock.Object);
+            _getUserByRefreshTokenUseCase = new GetUserByRefreshTokenUseCase(_unitOfWorkMock.Object, _mapperMock.Object);
+            _registerUserUseCase = new RegisterUserUseCase(_unitOfWorkMock.Object, _mapperMock.Object, _passwordMock.Object);
         }
 
         [Fact]
@@ -43,13 +40,14 @@ namespace EventWebApplication.Tests
             var user = new User { Email = email };
             var userDto = new UserDto { Email = email };
 
-            _unitOfWorkMock.UserRepository.GetByEmail(email, CancellationToken.None).Returns(Task.FromResult(user));
-            _mapperMock.Map<UserDto>(user).Returns(userDto);
+            _unitOfWorkMock.Setup(u => u.UserRepository.GetByEmail(email, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(user);
+            _mapperMock.Setup(m => m.Map<UserDto>(user)).Returns(userDto);
 
             var result = await _getUserByEmailUseCase.Execute(email, CancellationToken.None);
 
             Assert.NotNull(result);
-            Assert.Equal(result.Email, email);
+            Assert.Equal(email, result.Email);
         }
 
         [Fact]
@@ -59,13 +57,14 @@ namespace EventWebApplication.Tests
             var user = new User { Id = id };
             var userDto = new UserDto { Id = id };
 
-            _unitOfWorkMock.UserRepository.GetById(id, CancellationToken.None).Returns(Task.FromResult(user));
-            _mapperMock.Map<UserDto>(user).Returns(userDto);
+            _unitOfWorkMock.Setup(u => u.UserRepository.GetById(id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(user);
+            _mapperMock.Setup(m => m.Map<UserDto>(user)).Returns(userDto);
 
             var result = await _getUserByIdUseCase.Execute(id, CancellationToken.None);
 
             Assert.NotNull(result);
-            Assert.Equal(result.Id, id);
+            Assert.Equal(id, result.Id);
         }
 
         [Fact]
@@ -76,7 +75,7 @@ namespace EventWebApplication.Tests
                 .Options;
 
             var context = new EventWebApplicationDbContext(options);
-            var userDto = new UserDto { Id = Guid.NewGuid()};
+            var userDto = new UserDto { Id = Guid.NewGuid() };
             var userRole = new UserRole { Id = Guid.NewGuid(), Role = "User" };
             context.UserRoles.Add(userRole);
             context.SaveChanges();
@@ -87,17 +86,18 @@ namespace EventWebApplication.Tests
                 UserRole = userRole
             };
 
-            _unitOfWorkMock.UserRoleRepository.FindBy(Arg.Any<Expression<Func<UserRole, bool>>>())
+            _unitOfWorkMock.Setup(u => u.UserRoleRepository.FindBy(It.IsAny<Expression<Func<UserRole, bool>>>()))
                 .Returns(context.UserRoles.AsQueryable());
-            _unitOfWorkMock.UserRepository.CreateOne(Arg.Any<User>(), CancellationToken.None).Returns(user);
-            _unitOfWorkMock.UserRepository.Commit(CancellationToken.None).Returns(Task.CompletedTask);
-            _mapperMock.Map<UserDto>(Arg.Any<User>()).Returns(userDto);
+            _unitOfWorkMock.Setup(u => u.UserRepository.CreateOne(It.IsAny<User>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(user);
+            _unitOfWorkMock.Setup(u => u.UserRepository.Commit(It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+            _mapperMock.Setup(m => m.Map<UserDto>(It.IsAny<User>())).Returns(userDto);
 
             var result = await _registerUserUseCase.Execute(userDto, CancellationToken.None);
 
             Assert.NotNull(result);
             Assert.Equal(userDto.Id, result.Id);
-
         }
 
         [Fact]
@@ -105,17 +105,15 @@ namespace EventWebApplication.Tests
         {
             var userDto = new UserDto();
             var id = Guid.NewGuid();
-            var refToken = new RefreshToken(){Id =id};
+            var refToken = new RefreshToken() { Id = id };
             var user = new User
             {
-                RefreshTokens = new List<RefreshToken>()
+                RefreshTokens = new List<RefreshToken> { refToken }
             };
-            user.RefreshTokens.Add(refToken);
 
-
-            _unitOfWorkMock.UserRepository.GetByRefreshToken(id, CancellationToken.None)
-                .Returns(Task.FromResult(user));
-            _mapperMock.Map<UserDto>(user).Returns(userDto);
+            _unitOfWorkMock.Setup(u => u.UserRepository.GetByRefreshToken(id, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(user);
+            _mapperMock.Setup(m => m.Map<UserDto>(user)).Returns(userDto);
 
             var result = await _getUserByRefreshTokenUseCase.Execute(id, CancellationToken.None);
 

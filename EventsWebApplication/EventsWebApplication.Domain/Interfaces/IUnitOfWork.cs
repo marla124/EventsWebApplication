@@ -6,8 +6,9 @@ namespace EventsWebApplication.Domain.Interfaces
     {
         IUserRepository UserRepository { get; }
         IEventRepository EventRepository { get; }
-        IRepository<Category> CategoryRepository { get; }
+        ICategoryRepository CategoryRepository { get; }
         IRepository<UserRole> UserRoleRepository { get; }
         ITokenRepository TokenRepository { get; }
+        IParticipantRepository ParticipantRepository { get; }
     }
 }
